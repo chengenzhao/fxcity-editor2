@@ -4,7 +4,7 @@ import module com.almasb.fxgl.all;
 
 public class GameApp extends GameApplication {
 
-  Entity entity;
+  public Entity entity;
 
   @Override
   protected void initSettings(GameSettings settings) {
@@ -25,5 +25,6 @@ public class GameApp extends GameApplication {
     entity.getViewComponent().addDevChild(redDot);
     entity.setX(200);
     entity.setY(200);
+
   }
 }
