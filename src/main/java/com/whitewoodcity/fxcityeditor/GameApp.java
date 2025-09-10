@@ -1,4 +1,4 @@
-package com.whitewoodcity.fxcityeditor2;
+package com.whitewoodcity.fxcityeditor;
 
 import module com.almasb.fxgl.all;
 

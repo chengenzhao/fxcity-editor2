@@ -1,7 +1,7 @@
-package com.whitewoodcity.fxcityeditor2;
+package com.whitewoodcity.fxcityeditor;
 
 import module javafx.controls;
-import com.whitewoodcity.borders.MainMenu;
+import com.whitewoodcity.control.MainMenu;
 
 public class EditorApp extends javafx.application.Application {
   @Override

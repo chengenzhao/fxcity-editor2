@@ -68,7 +68,7 @@
                         <id>default-cli</id>
                         <configuration>
                             <mainClass>
-                                com.whitewoodcity.fxcityeditor2/com.whitewoodcity.fxcityeditor2.HelloApplication
+                                com.whitewoodcity.fxcityeditor2/com.whitewoodcity.fxcityeditor.HelloApplication
                             </mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>
