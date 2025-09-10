@@ -18,18 +18,29 @@ public class MainMenu extends MenuBar {
     menu.getItems().addAll(save, load);
     getMenus().add(menu);
 
-    load.setOnAction(_->{
+    load.setOnAction(_ -> {
       var fileChooser = new FileChooser();
       fileChooser.setTitle("What file would you like to load?");
       fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("svg files", "*.jvg"));
       var window = this.getScene().getWindow();
       var file = fileChooser.showOpenDialog(window);
-      if(file!=null){
+      if (file != null) {
         try {
           var jsonString = Files.readString(Paths.get(file.getPath()));
           var jvg = new JVG(jsonString);
           jvg.trim();
+          jvg.setMouseTransparent(true);
           FXGL.<GameApp>getAppCast().entity.getViewComponent().addChild(jvg);
+          var d = jvg.getDimension();
+          var rect = new Rectangle(d.getWidth(), d.getHeight());
+          rect.getStrokeDashArray().addAll(5d);
+          rect.setFill(Color.TRANSPARENT);
+          rect.setStroke(Color.web("#039ED3"));
+          var xy = jvg.getXY();
+          rect.setX(xy.getX());
+          rect.setY(xy.getY());
+          FXGL.<GameApp>getAppCast().entity.getViewComponent().addChild(rect);
+
         } catch (IOException e) {
           throw new RuntimeException(e);
         }

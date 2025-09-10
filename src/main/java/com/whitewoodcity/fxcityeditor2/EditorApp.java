@@ -13,7 +13,13 @@ public class EditorApp extends javafx.application.Application {
     var vbox = new VBox();
     vbox.getChildren().addAll(new MainMenu(), gamePane);
 
-    stage.setScene(new Scene(vbox));
+    stage.setScene(new Scene(vbox, Screen.getPrimary().getBounds().getWidth() * .75, Screen.getPrimary().getBounds().getHeight() * .75));
+
+    gamePane.prefWidthProperty().bind(stage.getScene().widthProperty());
+    gamePane.prefHeightProperty().bind(stage.getScene().heightProperty());
+    gamePane.renderWidthProperty().bind(stage.getScene().widthProperty());
+    gamePane.renderHeightProperty().bind(stage.getScene().heightProperty());
+
     stage.show();
   }
 }
