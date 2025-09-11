@@ -54,13 +54,17 @@ public class GameApp extends GameApplication {
         rect.setX(xy.getX());
         rect.setY(xy.getY());
       }
+      case ImageView imageView-> {
+        rect.setWidth(imageView.getFitWidth());
+        rect.setHeight(imageView.getFitHeight());
+        rect.setX(imageView.getX());
+        rect.setY(imageView.getY());
+      }
       default -> {
       }
     }
 
-    rect.getStrokeDashArray().addAll(5d);
     rect.setFill(Color.TRANSPARENT);
-    rect.setStroke(Color.web("#039ED3"));
 
     entity.getViewComponent().addDevChild(rect);
 
@@ -78,18 +82,36 @@ public class GameApp extends GameApplication {
     rect.xProperty().addListener(c);
     rect.yProperty().addListener(c);
 
-    rect.setOnMousePressed(e -> {
-      var x = rect.getX();
-      var y = rect.getY();
-      var ex = e.getX();
-      var ey = e.getY();
+    rect.setOnMousePressed(_ -> selectRect(rect));
+  }
 
-      rect.setOnMouseDragged(ee -> {
-        var dx = ee.getX() - ex;
-        var dy = ee.getY() - ey;
-        rect.setX(x + dx);
-        rect.setY(y + dy);
-      });
+  public void selectRect(Rectangle rect){
+//    rect.getStrokeDashArray().addAll(5d);
+    rect.setStroke(Color.web("#039ED3"));
+
+    rect.setOnMousePressed(e -> {
+      switch (e.getButton()){
+        case PRIMARY -> {
+          var x = rect.getX();
+          var y = rect.getY();
+          var ex = e.getX();
+          var ey = e.getY();
+
+          rect.setOnMouseDragged(ee -> {
+            var dx = ee.getX() - ex;
+            var dy = ee.getY() - ey;
+            rect.setX(x + dx);
+            rect.setY(y + dy);
+          });
+        }
+        case SECONDARY -> deSelectRect(rect);
+      }
     });
+  }
+
+  public void deSelectRect(Rectangle rect){
+    rect.setStroke(null);
+    rect.setOnMouseDragged(null);
+    rect.setOnMousePressed(_ -> selectRect(rect));
   }
 }
