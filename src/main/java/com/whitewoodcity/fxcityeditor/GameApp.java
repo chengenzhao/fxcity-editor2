@@ -18,7 +18,7 @@ public class GameApp extends GameApplication {
 
   public Entity entity;
 
-  private Map<Rectangle, Arrow> arrowMap = new HashMap<>();
+  private Map<EditableRectangle, Arrow> arrowMap = new HashMap<>();
 
   @Override
   protected void initSettings(GameSettings settings) {
@@ -91,31 +91,77 @@ public class GameApp extends GameApplication {
 //    rect.getStrokeDashArray().addAll(5d);
     rect.setStroke(Color.web("#039ED3"));
 
-    var arrow = createRotateArrow(rect);
+    var arrow = arrowMap.computeIfAbsent(rect, this::createRotateArrow);
     entity.getViewComponent().addDevChild(arrow);
-    arrowMap.put(rect, arrow);
 
     rect.setOnMousePressed(e -> {
       switch (e.getButton()){
         case PRIMARY -> {
-          var x = rect.getX();
-          var y = rect.getY();
+          var op = rect.getRotation().transform(new Point2D(e.getX(), e.getY()));
+          var x = op.getX();
+          var y = op.getY();
           var ax = rect.getRotation().getPivotX();
           var ay = rect.getRotation().getPivotY();
-          var ex = e.getX();
-          var ey = e.getY();
+          var rx = rect.getX();
+          var ry = rect.getY();
 
           rect.setOnMouseDragged(ee -> {
-            var dx = ee.getX() - ex;
-            var dy = ee.getY() - ey;
-            rect.setX(x + dx);
-            rect.setY(y + dy);
+            var p = rect.getRotation().transform(new Point2D(ee.getX(), ee.getY()));
+            var dx = p.getX() - x;
+            var dy = p.getY() - y;
+            rect.setX(rx + dx);
+            rect.setY(ry + dy);
             rect.getRotation().setPivotX(ax + dx);
             rect.getRotation().setPivotY(ay + dy);
+
+            rect.update();
           });
         }
         case SECONDARY -> deSelectRect(rect);
       }
+    });
+
+    arrow.getOrigin().setOnMousePressed(oe -> {
+//      selectTreeItem(hBox);
+      var op = rect.getRotation().transform(new Point2D(oe.getX(), oe.getY()));
+      var ox = op.getX();
+      var oy = op.getY();
+      var tx = arrow.getX1();
+      var ty = arrow.getY1();
+      arrow.getOrigin().setOnMouseDragged(e -> {
+        var p = rect.getRotation().transform(new Point2D(e.getX(), e.getY()));
+        double dx = p.getX() - ox;
+        double dy = p.getY() - oy;
+        var x1 = tx + dx;
+        var y1 = ty + dy;
+        if (x1 < rect.getX()) x1 = rect.getX();
+        if (x1 > rect.getX() + rect.getWidth()) x1 = rect.getX() + rect.getWidth();
+        if (y1 < rect.getY()) y1 = rect.getY();
+        if (y1 > rect.getY() + rect.getHeight()) y1 = rect.getY() + rect.getHeight();
+        rect.getRotation().setPivotX(x1);
+        rect.getRotation().setPivotY(y1);
+        update(rect, arrow);
+      });
+    });
+
+    arrow.getHeadB().setOnMousePressed(oe -> {
+//      selectTreeItem(hBox);
+      var ox = oe.getX();
+      arrow.getHeadB().setOnMouseDragged(e -> {
+        double changeInX = e.getX() - ox;
+        if (changeRectangleAngle(rect, changeInX))
+          update(rect, arrow);
+      });
+    });
+
+    arrow.getMainLine().setOnMousePressed(oe -> {
+//      selectTreeItem(hBox);
+      var ox = oe.getX();
+      arrow.getMainLine().setOnMouseDragged(e -> {
+        double changeInX = e.getX() - ox;
+        if (changeRectangleAngle(rect, changeInX))
+          update(rect,  arrow);
+      });
     });
   }
 
@@ -124,8 +170,16 @@ public class GameApp extends GameApplication {
     rect.setOnMouseDragged(null);
     rect.setOnMousePressed(_ -> selectRect(rect));
     var arrow = arrowMap.get(rect);
-    if(arrow!=null)
+    if(arrow!=null){
       entity.getViewComponent().removeDevChild(arrow);
+
+      arrow.getOrigin().setOnMousePressed(null);
+      arrow.getOrigin().setOnMouseDragged(null);
+      arrow.getHeadB().setOnMousePressed(null);
+      arrow.getHeadB().setOnMouseDragged(null);
+      arrow.getMainLine().setOnMousePressed(null);
+      arrow.getMainLine().setOnMouseDragged(null);
+    }
   }
 
   private Arrow createRotateArrow(EditableRectangle rect) {
@@ -134,10 +188,28 @@ public class GameApp extends GameApplication {
     arrow.y1Property().bind(rect.getRotation().pivotYProperty());
     arrow.y2Property().bind(XBindings.reduceDoubleValue(arrow.y1Property(), rect.heightProperty(), (y, h) -> y + Math.max(70, h)));
     arrow.x2Property().bind(arrow.x1Property());
-    rect.getTransforms().addListener((ListChangeListener<Transform>) _ -> {
-      arrow.getTransforms().clear();
-      arrow.getTransforms().addAll(rect.getTransforms());
-    });
+//    rect.getTransforms().addListener((ListChangeListener<Transform>) _ -> {
+//      arrow.getTransforms().clear();
+//      arrow.getTransforms().addAll(rect.getTransforms());
+//    });
+    rect.getTransforms().forEach(e -> arrow.getTransforms().add(e.clone()));
     return arrow;
+  }
+
+  private boolean changeRectangleAngle(EditableRectangle rect, double changeInX) {
+    var angle = rect.getRotation().getAngle();
+    if (changeInX > 0) rect.getRotation().setAngle(angle - 1);
+    if (changeInX < 0) rect.getRotation().setAngle(angle + 1);
+    return changeInX != 0;
+  }
+
+  private void update(EditableRectangle rect, Node... nodes) {
+    if( rect.parent()!=null)
+      update(rect.parent());
+    else rect.update();
+    for (var node : nodes) {
+      node.getTransforms().clear();
+      node.getTransforms().addAll(rect.getTransforms());
+    }
   }
 }

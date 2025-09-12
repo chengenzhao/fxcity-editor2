@@ -16,11 +16,13 @@ public class EditableRectangle extends Rectangle {
   private EditableRectangle parent;
   private final ObservableList<EditableRectangle> children = FXCollections.observableArrayList();
 
-  private Node node;
+  private final Node node;
 
   public EditableRectangle(Node node, Rotate rotate) {
     this.rotate = rotate;
     this.node = node;
+
+    addRotate(rotate);
   }
 
   public EditableRectangle(Node node) {
@@ -54,12 +56,24 @@ public class EditableRectangle extends Rectangle {
           throw new RuntimeException(e);
         }
       }
-      var r = (Rotate) this.getTransforms().get(i);
-      r.setPivotX(point.getX());
-      r.setPivotY(point.getY());
-      r.setAngle(rotate.getAngle());
-      this.getTransforms().set(i, r);
+//      var r = (Rotate) this.getTransforms().get(i);
+//      r.setPivotX(point.getX());
+//      r.setPivotY(point.getY());
+//      r.setAngle(rotate.getAngle());
+//      this.getTransforms().set(i, r);
+      updateRotate((Rotate)this.getTransforms().get(i), point, rotate.getAngle());
+      updateRotate((Rotate)node.getTransforms().get(i), point, rotate.getAngle());
     }
+  }
+
+  private Rotate updateRotate(Rotate r, Point2D pivot, double angle){
+    return this.updateRotate(r, pivot.getX(), pivot.getY(), angle);
+  }
+  private Rotate updateRotate(Rotate r, double pivotX, double pivotY, double angle){
+    r.setPivotX(pivotX);
+    r.setPivotY(pivotY);
+    r.setAngle(angle);
+    return r;
   }
 
   public void addRotate(Rotate rotate) {
@@ -78,8 +92,11 @@ public class EditableRectangle extends Rectangle {
 
   private void updateTransforms() {
     this.getTransforms().clear();
-    for (var r : rotates)
+    node.getTransforms().clear();
+    for (var r : rotates) {
       this.getTransforms().add(r.clone());
+      node.getTransforms().add(r.clone());
+    }
   }
 
   public void addRotates(Rotate... rs) {
