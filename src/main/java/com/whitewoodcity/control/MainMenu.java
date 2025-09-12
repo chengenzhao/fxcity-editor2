@@ -27,8 +27,7 @@ public class MainMenu extends MenuBar {
       if (file != null) {
         try {
           var jsonString = Files.readString(Paths.get(file.getPath()));
-          var jvg = new JVG(jsonString);
-          FXGL.<GameApp>getAppCast().addNode(jvg);
+          FXGL.<GameApp>getAppCast().addNode(new JVG(jsonString).trim());
         } catch (IOException e) {
           throw new RuntimeException(e);
         }

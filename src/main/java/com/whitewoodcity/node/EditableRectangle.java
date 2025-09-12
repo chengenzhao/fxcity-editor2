@@ -1,6 +1,8 @@
 package com.whitewoodcity.node;
 
 import module javafx.controls;
+import com.whitewoodcity.fxgl.texture.Texture;
+import com.whitewoodcity.fxgl.vectorview.JVG;
 import io.vertx.core.json.JsonObject;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.Rectangle;
@@ -14,17 +16,15 @@ public class EditableRectangle extends Rectangle {
   private EditableRectangle parent;
   private final ObservableList<EditableRectangle> children = FXCollections.observableArrayList();
 
-  public EditableRectangle(double width, double height, Rotate rotate) {
-    super(width, height);
+  private Node node;
+
+  public EditableRectangle(Node node, Rotate rotate) {
     this.rotate = rotate;
+    this.node = node;
   }
 
-  public EditableRectangle() {
-    this(0,0);
-  }
-
-  public EditableRectangle(double width, double height) {
-    this(width,height,new Rotate(360));
+  public EditableRectangle(Node node) {
+    this(node,new Rotate(360));
   }
 
   public ObservableList<EditableRectangle> getChildren() {
@@ -156,13 +156,26 @@ public class EditableRectangle extends Rectangle {
 
   @Override
   public EditableRectangle clone() {
-    var texture = new EditableRectangle(this.getWidth(), this.getHeight(), rotate.clone());
-    texture.setTranslateX(this.getTranslateX());
-    texture.setTranslateY(this.getTranslateY());
-    texture.setTranslateZ(this.getTranslateZ());
-    texture.setX(this.getX());
-    texture.setY(this.getY());
-    return texture;
+    var n = switch (node){
+      case JVG jvg -> jvg.copy();
+      case Texture texture -> texture.copy();
+      case ImageView view -> {
+        var v = new ImageView(view.getImage());
+        v.setFitWidth(view.getFitWidth());
+        v.setFitHeight(view.getFitHeight());
+        v.setX(view.getX());
+        v.setY(view.getY());
+        yield v;
+      }
+      default -> throw new RuntimeException("Unsupported Node type, only Texture, ImageView, JVG are supported");
+    };
+    var rect = new EditableRectangle(n, rotate.clone());
+    rect.setTranslateX(this.getTranslateX());
+    rect.setTranslateY(this.getTranslateY());
+    rect.setTranslateZ(this.getTranslateZ());
+    rect.setX(this.getX());
+    rect.setY(this.getY());
+    return rect;
   }
 
   public void show(String string) {

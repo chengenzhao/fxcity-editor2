@@ -43,14 +43,9 @@ public class GameApp extends GameApplication {
   }
 
   public void addNode(Node node) {
-    switch (node) {
-      case JVG jvg -> jvg.trim();
-      default -> {
-      }
-    }
     node.setMouseTransparent(true);
     entity.getViewComponent().addChild(node);
-    var rect = new EditableRectangle();
+    var rect = new EditableRectangle(node);
     switch (node) {
       case JVG jvg -> {
         var d = jvg.getDimension();
