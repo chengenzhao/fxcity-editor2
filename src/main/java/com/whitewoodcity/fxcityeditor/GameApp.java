@@ -97,7 +97,7 @@ public class GameApp extends GameApplication {
     rect.setOnMousePressed(e -> {
       switch (e.getButton()){
         case PRIMARY -> {
-          var op = rect.getRotation().transform(new Point2D(e.getX(), e.getY()));
+          var op = rect.transform(new Point2D(e.getX(), e.getY()));
           var x = op.getX();
           var y = op.getY();
           var ax = rect.getRotation().getPivotX();
@@ -106,7 +106,7 @@ public class GameApp extends GameApplication {
           var ry = rect.getY();
 
           rect.setOnMouseDragged(ee -> {
-            var p = rect.getRotation().transform(new Point2D(ee.getX(), ee.getY()));
+            var p = rect.transform(new Point2D(ee.getX(), ee.getY()));
             var dx = p.getX() - x;
             var dy = p.getY() - y;
             rect.setX(rx + dx);
@@ -123,13 +123,13 @@ public class GameApp extends GameApplication {
 
     arrow.getOrigin().setOnMousePressed(oe -> {
 //      selectTreeItem(hBox);
-      var op = rect.getRotation().transform(new Point2D(oe.getX(), oe.getY()));
+      var op = rect.transform(new Point2D(oe.getX(), oe.getY()));
       var ox = op.getX();
       var oy = op.getY();
       var tx = arrow.getX1();
       var ty = arrow.getY1();
       arrow.getOrigin().setOnMouseDragged(e -> {
-        var p = rect.getRotation().transform(new Point2D(e.getX(), e.getY()));
+        var p = rect.transform(new Point2D(e.getX(), e.getY()));
         double dx = p.getX() - ox;
         double dy = p.getY() - oy;
         var x1 = tx + dx;

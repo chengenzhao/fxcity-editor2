@@ -219,4 +219,5 @@ public class EditableRectangle extends Rectangle {
     //spread the rotation to the children and parent textures
     update();
   }
+
 }
