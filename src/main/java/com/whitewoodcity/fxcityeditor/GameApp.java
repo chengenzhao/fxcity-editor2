@@ -2,14 +2,12 @@ package com.whitewoodcity.fxcityeditor;
 
 import module com.almasb.fxgl.all;
 import module com.whitewoodcity.fxcity;
+import module java.base;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.dsl.FXGL;
 import com.whitewoodcity.node.EditableRectangle;
 import com.whitewoodcity.node.arrows.Arrow;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class GameApp extends GameApplication {
 
@@ -18,7 +16,9 @@ public class GameApp extends GameApplication {
 
   public Entity entity;
 
-  private Map<EditableRectangle, Arrow> arrowMap = new HashMap<>();
+  private final List<EditableRectangle> rectangles = new ArrayList<>();
+  private final Map<EditableRectangle, Arrow> arrowMap = new HashMap<>();
+  private EditableRectangle currentRect = null;
 
   @Override
   protected void initSettings(GameSettings settings) {
@@ -85,9 +85,13 @@ public class GameApp extends GameApplication {
     rect.yProperty().addListener(c);
 
     rect.setOnMousePressed(_ -> selectRect(rect));
+
+    rectangles.add(rect);
   }
 
   public void selectRect(EditableRectangle rect){
+    if(currentRect!=null) deSelectRect(currentRect);
+    currentRect = rect;
 //    rect.getStrokeDashArray().addAll(5d);
     rect.setStroke(Color.web("#039ED3"));
 
@@ -188,10 +192,6 @@ public class GameApp extends GameApplication {
     arrow.y1Property().bind(rect.getRotation().pivotYProperty());
     arrow.y2Property().bind(XBindings.reduceDoubleValue(arrow.y1Property(), rect.heightProperty(), (y, h) -> y + Math.max(70, h)));
     arrow.x2Property().bind(arrow.x1Property());
-//    rect.getTransforms().addListener((ListChangeListener<Transform>) _ -> {
-//      arrow.getTransforms().clear();
-//      arrow.getTransforms().addAll(rect.getTransforms());
-//    });
     rect.getTransforms().forEach(e -> arrow.getTransforms().add(e.clone()));
     return arrow;
   }

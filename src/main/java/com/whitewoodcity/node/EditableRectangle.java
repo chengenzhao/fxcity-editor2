@@ -29,6 +29,10 @@ public class EditableRectangle extends Rectangle {
     this(node,new Rotate(360));
   }
 
+  public Node getNode() {
+    return node;
+  }
+
   public ObservableList<EditableRectangle> getChildren() {
     return children;
   }
@@ -56,11 +60,6 @@ public class EditableRectangle extends Rectangle {
           throw new RuntimeException(e);
         }
       }
-//      var r = (Rotate) this.getTransforms().get(i);
-//      r.setPivotX(point.getX());
-//      r.setPivotY(point.getY());
-//      r.setAngle(rotate.getAngle());
-//      this.getTransforms().set(i, r);
       updateRotate((Rotate)this.getTransforms().get(i), point, rotate.getAngle());
       updateRotate((Rotate)node.getTransforms().get(i), point, rotate.getAngle());
     }
