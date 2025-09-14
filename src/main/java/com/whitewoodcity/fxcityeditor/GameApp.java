@@ -235,4 +235,9 @@ public class GameApp extends GameApplication {
       node.getTransforms().addAll(rect.getTransforms());
     }
   }
+
+  public void delete(EditableRectangle rect){
+    entity.getViewComponent().removeDevChild(rect);
+    entity.getViewComponent().removeChild(rect.getNode());
+  }
 }

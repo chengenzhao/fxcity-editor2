@@ -50,11 +50,16 @@ public class LeftColumn extends VBox {
     return item;
   }
 
+  public String getText(TreeItem<Node> item){
+    return ((TextField)((HBox)item.getValue()).getChildren().get(1)).getText();
+  }
+
   private TreeItem<Node> generateNodeItem(String name, TreeItem<Node> root){
     var hBox = new HBox();
     var treeItem = new TreeItem<Node>(hBox);
 
     var textField = new TextField(name);
+    textField.setPrefWidth(100);
 
     textField.focusedProperty().addListener((_,_,n)->{
       if(n){
@@ -67,7 +72,20 @@ public class LeftColumn extends VBox {
     var down = new Button("↓");
     var upNDown = new HBox(up, down);
     upNDown.setAlignment(Pos.BASELINE_LEFT);
-    hBox.getChildren().addAll(upNDown, textField);
+    var del = new Button("×");
+    hBox.getChildren().addAll(upNDown, textField, del);
+
+    del.setOnAction(_->{
+      if(treeView.getSelectionModel().getSelectedItem() == treeItem){
+        treeView.getSelectionModel().select(null);
+      }
+
+      treeView.getRoot().getChildren().remove(treeItem);
+      var rect = EditorApp.getEditorApp().bottomPane.delete(treeItem);
+      FXGL.<GameApp>getAppCast().delete(rect);
+
+      FXGL.<GameApp>getAppCast().update();
+    });
 
     up.setOnAction(_ -> {
       var i = root.getChildren().indexOf(treeItem);
