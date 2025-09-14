@@ -58,6 +58,7 @@ public class GameApp extends GameApplication {
       entity.getViewComponent().addDevChild(rect);
       rect.setOnMousePressed(_ -> selectRect(rect));
     }
+    EditorApp.getEditorApp().rightColumn.update();
   }
 
   public EditableRectangle addNode(Node node) {
@@ -107,6 +108,10 @@ public class GameApp extends GameApplication {
     return rect;
   }
 
+  public EditableRectangle getCurrentRect() {
+    return currentRect;
+  }
+
   public void selectRect(EditableRectangle rect){
     if(currentRect!=null) deSelectRect(currentRect);
     currentRect = rect;
@@ -149,13 +154,13 @@ public class GameApp extends GameApplication {
 
     arrow.getOrigin().setOnMousePressed(oe -> {
 //      selectTreeItem(hBox);
-      var op = rect.transform(new Point2D(oe.getX(), oe.getY()));
+      var op = oe;//rect.transform(new Point2D(oe.getX(), oe.getY()));
       var ox = op.getX();
       var oy = op.getY();
       var tx = arrow.getX1();
       var ty = arrow.getY1();
       arrow.getOrigin().setOnMouseDragged(e -> {
-        var p = rect.transform(new Point2D(e.getX(), e.getY()));
+        var p = e;//rect.transform(new Point2D(e.getX(), e.getY()));
         double dx = p.getX() - ox;
         double dy = p.getY() - oy;
         var x1 = tx + dx;
@@ -189,9 +194,14 @@ public class GameApp extends GameApplication {
           update(rect,  arrow);
       });
     });
+
+    update(rect, arrow);
+
+    EditorApp.getEditorApp().rightColumn.update();
   }
 
   public void deSelectRect(EditableRectangle rect){
+    currentRect = null;
     if(rect == null) return;
     rect.setStroke(null);
     rect.setOnMouseDragged(null);
@@ -207,6 +217,8 @@ public class GameApp extends GameApplication {
       arrow.getMainLine().setOnMousePressed(null);
       arrow.getMainLine().setOnMouseDragged(null);
     }
+
+    EditorApp.getEditorApp().rightColumn.update();
   }
 
   private Arrow createRotateArrow(EditableRectangle rect) {

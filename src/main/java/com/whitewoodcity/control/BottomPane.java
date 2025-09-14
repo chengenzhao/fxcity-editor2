@@ -31,4 +31,13 @@ public class BottomPane extends Pane {
 
     return rect;
   }
+
+  public void setParent(TreeItem<Node> child, TreeItem<Node> parent){
+    keyFrames.forEach(f -> {
+      var m = f.getRectBiMap();
+      var c = m.get(child);
+      var p = m.get(parent);
+      c.setParent(p);
+    });
+  }
 }

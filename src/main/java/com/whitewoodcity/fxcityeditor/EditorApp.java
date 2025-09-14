@@ -7,8 +7,8 @@ public class EditorApp extends Application {
 
   public MainMenu mainMenu = new MainMenu();
   public LeftColumn leftColumn = new LeftColumn();
-  public RightColumn rightColumn = new RightColumn();
   public BottomPane bottomPane = new BottomPane();
+  public RightColumn rightColumn = new RightColumn();
 
   private static EditorApp editorApp;
 

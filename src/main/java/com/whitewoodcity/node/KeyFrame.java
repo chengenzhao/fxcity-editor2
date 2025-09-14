@@ -90,16 +90,16 @@ public class KeyFrame extends Rectangle {
 //      gameApp.arrowMaps.get(hBox).put(this, createRotateArrow(texture));
     }
 
-    for(var texture:keyFrame.rectBiMap.values()){
-      if(texture.parent()!=null){
-        var child = rectBiMap.get(keyFrame.rectBiMap.inverse().get(texture));
-        var parent = rectBiMap.get(keyFrame.rectBiMap.inverse().get(texture.parent()));
+    for(var rect:keyFrame.rectBiMap.values()){
+      if(rect.parent()!=null){
+        var child = rectBiMap.get(keyFrame.rectBiMap.inverse().get(rect));
+        var parent = rectBiMap.get(keyFrame.rectBiMap.inverse().get(rect.parent()));
         child.setParent(parent);
       }
     }
 
-    for(var texture: rectBiMap.values())
-      texture.update();
+    for(var rect: rectBiMap.values())
+      rect.update();
   }
 
 
