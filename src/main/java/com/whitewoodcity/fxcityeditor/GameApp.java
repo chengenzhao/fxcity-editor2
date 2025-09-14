@@ -42,7 +42,9 @@ public class GameApp extends GameApplication {
     entity.setY(200);
   }
 
-  public void addNode(Node node) {
+  public void addNode(String name, Node node) {
+    EditorApp.getEditorApp().leftColumn.addNode(name);
+
     node.setMouseTransparent(true);
     entity.getViewComponent().addChild(node);
     var rect = new EditableRectangle(node);

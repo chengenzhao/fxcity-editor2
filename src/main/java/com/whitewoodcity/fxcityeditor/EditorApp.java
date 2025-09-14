@@ -1,9 +1,24 @@
 package com.whitewoodcity.fxcityeditor;
 
 import module javafx.controls;
-import com.whitewoodcity.control.MainMenu;
+import com.whitewoodcity.control.*;
 
-public class EditorApp extends javafx.application.Application {
+public class EditorApp extends Application {
+
+  public LeftColumn leftColumn = new LeftColumn();
+  public RightColumn rightColumn = new RightColumn();
+  public BottomPane bottomPane = new BottomPane();
+
+  private static EditorApp editorApp;
+
+  public EditorApp() {
+    editorApp = this;
+  }
+
+  public static EditorApp getEditorApp() {
+    return editorApp;
+  }
+
   @Override
   public void start(Stage stage) throws Exception {
 
@@ -11,7 +26,12 @@ public class EditorApp extends javafx.application.Application {
     gamePane.setRenderFill(Color.TRANSPARENT);
 
     var vbox = new VBox();
-    vbox.getChildren().addAll(new MainMenu(), gamePane);
+    var border = new BorderPane();
+    border.setCenter(gamePane);
+    border.setRight(rightColumn);
+    border.setLeft(leftColumn);
+    border.setBottom(bottomPane);
+    vbox.getChildren().addAll(new MainMenu(), border);
 
     stage.setScene(new Scene(vbox, Screen.getPrimary().getBounds().getWidth() * .75, Screen.getPrimary().getBounds().getHeight() * .75));
 
