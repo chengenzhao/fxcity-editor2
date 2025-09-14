@@ -112,14 +112,23 @@ public class GameApp extends GameApplication {
     return currentRect;
   }
 
+  public void selectSubRect(EditableRectangle rect){
+    rect.getStrokeDashArray().addAll(5d);
+    rect.setStroke(Color.web("#039ED3"));
+    for(var child:rect.getChildren())
+      selectSubRect(child);
+  }
+
   public void selectRect(EditableRectangle rect){
     if(currentRect!=null) deSelectRect(currentRect);
     currentRect = rect;
 
     EditorApp.getEditorApp().leftColumn.select(EditorApp.getEditorApp().bottomPane.currentFrame.getRectBiMap().inverse().get(rect));
 
-//    rect.getStrokeDashArray().addAll(5d);
+    rect.getStrokeDashArray().clear();
     rect.setStroke(Color.web("#039ED3"));
+    for(var child:rect.getChildren())
+      selectSubRect(child);
 
     var arrow = arrowMap.computeIfAbsent(rect, this::createRotateArrow);
     entity.getViewComponent().removeDevChild(arrow);
@@ -200,6 +209,12 @@ public class GameApp extends GameApplication {
     EditorApp.getEditorApp().rightColumn.update();
   }
 
+  public void deSelectSubRect(EditableRectangle rect){
+    rect.setStroke(null);
+    for(var child:rect.getChildren())
+      deSelectSubRect(child);
+  }
+
   public void deSelectRect(EditableRectangle rect){
     currentRect = null;
     if(rect == null) return;
@@ -217,6 +232,9 @@ public class GameApp extends GameApplication {
       arrow.getMainLine().setOnMousePressed(null);
       arrow.getMainLine().setOnMouseDragged(null);
     }
+
+    for(var child:rect.getChildren())
+      deSelectSubRect(child);
 
     EditorApp.getEditorApp().rightColumn.update();
   }

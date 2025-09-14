@@ -1,5 +1,6 @@
 package com.whitewoodcity.control;
 
+import com.whitewoodcity.fxcityeditor.EditorApp;
 import com.whitewoodcity.node.EditableRectangle;
 import com.whitewoodcity.node.KeyFrame;
 import javafx.scene.Node;
@@ -24,6 +25,17 @@ public class BottomPane extends Pane {
 
   public EditableRectangle delete(TreeItem<Node> item){
     var rect = currentFrame.getRectBiMap().get(item);
+
+    if(rect.parent()!=null){
+      EditorApp.getEditorApp().bottomPane.setParent(item,null);
+    }
+    if(!rect.children().isEmpty()){
+      new ArrayList<>(rect.children()).forEach(child -> {
+        var i = currentFrame.getRectBiMap().inverse().get(child);
+        EditorApp.getEditorApp().bottomPane.setParent(i,null);
+      });
+    }
+
     keyFrames.forEach(f -> {
       var m = f.getRectBiMap();
       m.remove(item);
@@ -37,7 +49,7 @@ public class BottomPane extends Pane {
       var m = f.getRectBiMap();
       var c = m.get(child);
       var p = m.get(parent);
-      c.setParent(p);
+      if(c!=null) c.setParent(p);
     });
   }
 }
