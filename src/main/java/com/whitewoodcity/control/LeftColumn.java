@@ -1,5 +1,9 @@
 package com.whitewoodcity.control;
 
+import com.almasb.fxgl.dsl.FXGL;
+import com.whitewoodcity.fxcityeditor.EditorApp;
+import com.whitewoodcity.fxcityeditor.GameApp;
+import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -11,7 +15,7 @@ import javafx.scene.layout.VBox;
 
 public class LeftColumn extends VBox {
 
-  private TreeView<Node> treeView = new TreeView<>();
+  private final TreeView<Node> treeView = new TreeView<>();
 
   public LeftColumn(){
     this.getChildren().add(treeView);
@@ -20,14 +24,30 @@ public class LeftColumn extends VBox {
     treeView.setRoot(root);
     treeView.setShowRoot(false);
 
-//    root.getChildren().add(generateNodeItem(root));
-//    root.getChildren().add(generateNodeItem(root));
+    treeView.getSelectionModel().selectedItemProperty().addListener((_,old,newV)->{
+      var map = EditorApp.getEditorApp().bottomPane.currentFrame.getRectBiMap();
+      if(old!=null){
+        FXGL.<GameApp>getAppCast().deSelectRect(map.get(old));
+      }
+      if(newV!=null){
+        FXGL.<GameApp>getAppCast().selectRect(map.get(newV));
+      }
+    });
   }
 
-  public void addNode(String name){
+  public void select(TreeItem<Node> item){
+    treeView.getSelectionModel().select(item);
+  }
+
+  public ObservableList<TreeItem<Node>> getTreeItems(){
+    return treeView.getRoot().getChildren();
+  }
+
+  public TreeItem<Node> addNode(String name){
     var root = treeView.getRoot();
     var item = generateNodeItem(name, root);
     root.getChildren().add(item);
+    return item;
   }
 
   private TreeItem<Node> generateNodeItem(String name, TreeItem<Node> root){

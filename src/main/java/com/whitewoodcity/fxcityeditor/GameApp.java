@@ -16,7 +16,6 @@ public class GameApp extends GameApplication {
 
   public Entity entity;
 
-  private final List<EditableRectangle> rectangles = new ArrayList<>();
   private final Map<EditableRectangle, Arrow> arrowMap = new HashMap<>();
   private EditableRectangle currentRect = null;
 
@@ -42,9 +41,26 @@ public class GameApp extends GameApplication {
     entity.setY(200);
   }
 
-  public void addNode(String name, Node node) {
-    EditorApp.getEditorApp().leftColumn.addNode(name);
+  public void clear(){
+    for(var v:entity.getViewComponent().getChildren()){
+      var rect = EditorApp.getEditorApp().mainMenu.getRectByNode(v);
+      entity.getViewComponent().removeDevChild(rect);
+    }
+    entity.getViewComponent().clearChildren();
+  }
 
+  public void update(){
+    clear();
+    var frame = EditorApp.getEditorApp().bottomPane.currentFrame;
+    for(var item:EditorApp.getEditorApp().leftColumn.getTreeItems()){
+      var rect = frame.getRectBiMap().get(item);
+      entity.getViewComponent().addChild(rect.getNode());
+      entity.getViewComponent().addDevChild(rect);
+      rect.setOnMousePressed(_ -> selectRect(rect));
+    }
+  }
+
+  public EditableRectangle addNode(Node node) {
     node.setMouseTransparent(true);
     entity.getViewComponent().addChild(node);
     var rect = new EditableRectangle(node);
@@ -88,16 +104,20 @@ public class GameApp extends GameApplication {
 
     rect.setOnMousePressed(_ -> selectRect(rect));
 
-    rectangles.add(rect);
+    return rect;
   }
 
   public void selectRect(EditableRectangle rect){
     if(currentRect!=null) deSelectRect(currentRect);
     currentRect = rect;
+
+    EditorApp.getEditorApp().leftColumn.select(EditorApp.getEditorApp().bottomPane.currentFrame.getRectBiMap().inverse().get(rect));
+
 //    rect.getStrokeDashArray().addAll(5d);
     rect.setStroke(Color.web("#039ED3"));
 
     var arrow = arrowMap.computeIfAbsent(rect, this::createRotateArrow);
+    entity.getViewComponent().removeDevChild(arrow);
     entity.getViewComponent().addDevChild(arrow);
 
     rect.setOnMousePressed(e -> {
@@ -172,6 +192,7 @@ public class GameApp extends GameApplication {
   }
 
   public void deSelectRect(EditableRectangle rect){
+    if(rect == null) return;
     rect.setStroke(null);
     rect.setOnMouseDragged(null);
     rect.setOnMousePressed(_ -> selectRect(rect));

@@ -5,6 +5,7 @@ import com.whitewoodcity.control.*;
 
 public class EditorApp extends Application {
 
+  public MainMenu mainMenu = new MainMenu();
   public LeftColumn leftColumn = new LeftColumn();
   public RightColumn rightColumn = new RightColumn();
   public BottomPane bottomPane = new BottomPane();
@@ -31,7 +32,7 @@ public class EditorApp extends Application {
     border.setRight(rightColumn);
     border.setLeft(leftColumn);
     border.setBottom(bottomPane);
-    vbox.getChildren().addAll(new MainMenu(), border);
+    vbox.getChildren().addAll(mainMenu, border);
 
     stage.setScene(new Scene(vbox, Screen.getPrimary().getBounds().getWidth() * .75, Screen.getPrimary().getBounds().getHeight() * .75));
 

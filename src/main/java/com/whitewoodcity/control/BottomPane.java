@@ -9,10 +9,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BottomPane extends Pane {
-  private final List<KeyFrame> keyFrames = new ArrayList<>();
+  public final List<KeyFrame> keyFrames = new ArrayList<>();
+  public KeyFrame currentFrame;
 
   public BottomPane() {
     keyFrames.add(new KeyFrame(20, 50).setTime(new Duration(0)).setColor(Color.ORANGE));
+    currentFrame = keyFrames.getFirst();
 
     keyFrames.forEach(e -> this.getChildren().add(e));
   }
