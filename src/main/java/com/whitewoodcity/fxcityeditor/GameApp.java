@@ -120,7 +120,7 @@ public class GameApp extends GameApplication {
   }
 
   public void selectRect(EditableRectangle rect){
-    if(currentRect!=null) deSelectRect(currentRect);
+    deSelectRect();
     currentRect = rect;
 
     EditorApp.getEditorApp().leftColumn.select(EditorApp.getEditorApp().bottomPane.currentFrame.getRectBiMap().inverse().get(rect));
@@ -213,6 +213,12 @@ public class GameApp extends GameApplication {
     rect.setStroke(null);
     for(var child:rect.getChildren())
       deSelectSubRect(child);
+  }
+
+  public void deSelectRect(){
+    if(currentRect!=null)
+      deSelectRect(currentRect);
+    currentRect = null;
   }
 
   public void deSelectRect(EditableRectangle rect){
