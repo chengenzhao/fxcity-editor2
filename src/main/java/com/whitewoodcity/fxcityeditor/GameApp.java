@@ -259,6 +259,13 @@ public class GameApp extends GameApplication {
     var angle = rect.getRotation().getAngle();
     if (changeInX > 0) rect.getRotation().setAngle(angle - 1);
     if (changeInX < 0) rect.getRotation().setAngle(angle + 1);
+
+    angle = rect.getRotation().getAngle();
+    if(angle < 360) angle += 360;
+    if(angle > 720) angle -= 360;
+
+    rect.getRotation().setAngle(angle);
+
     return changeInX != 0;
   }
 

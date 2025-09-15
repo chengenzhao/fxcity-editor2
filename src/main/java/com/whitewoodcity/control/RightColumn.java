@@ -4,11 +4,13 @@ import com.almasb.fxgl.dsl.FXGL;
 import com.whitewoodcity.fxcityeditor.EditorApp;
 import com.whitewoodcity.fxcityeditor.GameApp;
 import com.whitewoodcity.node.EditableRectangle;
+import com.whitewoodcity.node.NumberField;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TreeItem;
 import javafx.scene.layout.GridPane;
 import javafx.util.StringConverter;
@@ -25,7 +27,8 @@ public class RightColumn extends GridPane {
     this.setVgap(10);
     this.setHgap(10);
     this.add(choiceBox,0,0);
-    this.add(visible, 1,0);
+    this.add(new Label("Visible:"),0,1);
+    this.add(visible, 1,1);
   }
 
   public void unbind(){
@@ -37,6 +40,8 @@ public class RightColumn extends GridPane {
     if(rect !=null) {
       visible.selectedProperty().unbindBidirectional(rect.getNode().visibleProperty());
     }
+
+    this.getChildren().remove(3,this.getChildren().size());
   }
 
   public void update(){
@@ -84,6 +89,33 @@ public class RightColumn extends GridPane {
     });
 
     visible.selectedProperty().bindBidirectional(rect.getNode().visibleProperty());
+
+    this.add(new Label("PivotX:"),0,2);
+    var pivotX = new NumberField(Integer.MIN_VALUE,Integer.MAX_VALUE);
+    pivotX.setPrefWidth(100);
+    pivotX.valueProperty().bindBidirectional(rect.getRotation().pivotXProperty());
+    pivotX.valueProperty().addListener((_,_,newV)->{
+      if(newV.doubleValue() > rect.getX() + rect.getWidth()) pivotX.valueProperty().set(rect.getX() + rect.getWidth());
+      if(newV.doubleValue() < rect.getX()) pivotX.valueProperty().set(rect.getX());
+    });
+    this.add(pivotX, 1,2);
+
+    this.add(new Label("PivotY:"),0,3);
+    var pivotY = new NumberField(Integer.MIN_VALUE,Integer.MAX_VALUE);
+    pivotY.prefWidthProperty().bind(pivotX.prefWidthProperty());
+    pivotY.valueProperty().bindBidirectional(rect.getRotation().pivotYProperty());
+    pivotY.valueProperty().addListener((_,_,newV)->{
+      if(newV.doubleValue() > rect.getY() + rect.getHeight()) pivotY.valueProperty().set(rect.getY() + rect.getHeight());
+      if(newV.doubleValue() < rect.getY()) pivotY.valueProperty().set(rect.getY());
+    });
+    this.add(pivotY, 1,3);
+
+    this.add(new Label("Angle:"),0,4);
+    var angle = new NumberField(0,720);
+    angle.prefWidthProperty().bind(pivotX.prefWidthProperty());
+    angle.valueProperty().bindBidirectional(rect.getRotation().angleProperty());
+    angle.setOnAction(_-> rect.update());
+    this.add(angle, 1,4);
   }
 
   private void removeTextureFromItems(ObservableList<TreeItem<Node>> items, EditableRectangle rect) {
