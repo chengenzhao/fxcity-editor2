@@ -8,10 +8,7 @@ import com.whitewoodcity.node.NumberField;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TreeItem;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.util.StringConverter;
 
@@ -86,6 +83,7 @@ public class RightColumn extends GridPane {
       var child = map.get(rect);
       var parent = choiceBox.getValue();
       EditorApp.getEditorApp().bottomPane.setParent(child, parent);
+      update();
     });
 
     visible.selectedProperty().bindBidirectional(rect.getNode().visibleProperty());
@@ -116,6 +114,35 @@ public class RightColumn extends GridPane {
     angle.valueProperty().bindBidirectional(rect.getRotation().angleProperty());
     angle.setOnAction(_-> rect.update());
     this.add(angle, 1,4);
+
+    for(int j=1;j<rect.getRotates().size();j++){
+
+      var rotate = rect.getRotates().get(j);
+      int i = j-1;
+
+      this.add(new Separator(),0,5 + 4*i, 2,1);
+
+      this.add(new Label("PivotX:"),0,6 + i*4);
+      var px = new TextField();
+      px.prefWidthProperty().bind(pivotX.prefWidthProperty());
+      px.textProperty().bind(rotate.pivotXProperty().map(p -> p.doubleValue()+""));
+      px.setEditable(false);
+      this.add(px, 1,6 + i*4);
+
+      this.add(new Label("PivotY:"),0,7 + i*4);
+      var py = new TextField();
+      py.prefWidthProperty().bind(px.prefWidthProperty());
+      py.textProperty().bind(rotate.pivotYProperty().map(p -> p.doubleValue()+""));
+      py.setEditable(false);
+      this.add(py, 1,7 + i*4);
+
+      this.add(new Label("Angle:"),0,8 + i*4);
+      var af = new TextField();
+      af.prefWidthProperty().bind(px.prefWidthProperty());
+      af.textProperty().bind(rotate.angleProperty().map(a -> a.doubleValue()+""));
+      af.setEditable(false);
+      this.add(af, 1,8 + i*4);
+    }
   }
 
   private void removeTextureFromItems(ObservableList<TreeItem<Node>> items, EditableRectangle rect) {
