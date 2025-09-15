@@ -7,29 +7,52 @@ import com.whitewoodcity.node.EditableRectangle;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TreeItem;
 import javafx.scene.layout.GridPane;
 import javafx.util.StringConverter;
 
 public class RightColumn extends GridPane {
+
+  private EditableRectangle rect = null;
+
   ChoiceBox<TreeItem<Node>> choiceBox = new ChoiceBox<>();
+  CheckBox visible = new CheckBox();
 
   public RightColumn() {
     this.setPadding(new Insets(10));
     this.setVgap(10);
     this.setHgap(10);
     this.add(choiceBox,0,0);
+    this.add(visible, 1,0);
   }
 
-  public void update(){
+  public void unbind(){
+
     choiceBox.setOnAction(null);
     choiceBox.getItems().clear();
     choiceBox.setValue(null);
-    choiceBox.setDisable(true);
-    var rect = FXGL.<GameApp>getAppCast().getCurrentRect();
-    if(rect == null) return;
-    choiceBox.setDisable(false);
+
+    if(rect !=null) {
+      visible.selectedProperty().unbindBidirectional(rect.getNode().visibleProperty());
+    }
+  }
+
+  public void update(){
+    unbind();
+
+    rect = FXGL.<GameApp>getAppCast().getCurrentRect();
+    if(rect == null) {
+      choiceBox.setDisable(true);
+      visible.setDisable(true);
+      visible.setSelected(false);
+      return;
+    }else{
+      choiceBox.setDisable(false);
+      visible.setDisable(false);
+    }
+
     choiceBox.getItems().add(null);
     choiceBox.getItems().addAll(EditorApp.getEditorApp().leftColumn.getTreeItems());
 
@@ -59,6 +82,8 @@ public class RightColumn extends GridPane {
       var parent = choiceBox.getValue();
       EditorApp.getEditorApp().bottomPane.setParent(child, parent);
     });
+
+    visible.selectedProperty().bindBidirectional(rect.getNode().visibleProperty());
   }
 
   private void removeTextureFromItems(ObservableList<TreeItem<Node>> items, EditableRectangle rect) {
