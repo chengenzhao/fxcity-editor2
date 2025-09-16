@@ -94,6 +94,10 @@ public class BottomPane extends Pane {
     });
 
     objectButton.setOnAction(_->showFrameData());
+
+    playButton.setOnAction(_->{
+      IO.println(buildTransitionJson());
+    });
   }
 
   public KeyFrame addKeyFrames(double timeInMillis) {
@@ -220,6 +224,9 @@ public class BottomPane extends Pane {
   JsonObject extractJsonFromNode(Node node) {
     var json = new JsonObject();
 
+    if(node instanceof EditableRectangle rect)
+      node = rect.getNode();
+
     switch (node){
       case JVG jvg -> {
         var xy = jvg.getXY();
@@ -280,5 +287,28 @@ public class BottomPane extends Pane {
     dialog.getDialogPane().lookupButton(okButtonType);
 
     dialog.showAndWait();
+  }
+
+  JsonObject extractJsonFromNode(double timeInMillis, Node node) {
+    var json = extractJsonFromNode(node);
+    json.put(RotateJsonKeys.TIME.key(), timeInMillis);//time in millis
+    return json;
+  }
+
+  JsonArray buildTransitionJson() {
+    var arrayNode = new JsonArray();
+    for (var item : EditorApp.getEditorApp().leftColumn.getTreeItems()) {
+      var animationData = new JsonArray();
+
+      var jsons = keyFrames.stream().map(kf -> extractJsonFromNode(kf.getTimeInSeconds() * 1000, kf.getRectBiMap().get(item))).toList();
+      animationData.addAll(new JsonArray(jsons));
+
+      var rect = keyFrames.getFirst().getRectBiMap().get(item);
+      var jsonNode = extractJsonFromNode(totalTime.getDouble() * 1000, rect.getNode());
+      animationData.add(jsonNode);
+
+      arrayNode.add(animationData);
+    }
+    return arrayNode;
   }
 }
