@@ -75,7 +75,8 @@ public class BottomPane extends Pane {
     this.getChildren().addAll(hbox, line, anchor);
 
     bindKeyFrameTag(currentFrame, line, false);
-    getChildren().add(currentFrame);
+    var timeField = buildTimeFieldForKeyFrame(currentFrame,false);
+    getChildren().addAll(currentFrame, timeField);
 //    select(currentFrame);
 //    for (int i = 0; i < keyFrames.size(); i++) {
 //      var kf = keyFrames.get(i);
@@ -93,7 +94,9 @@ public class BottomPane extends Pane {
       var kf = addKeyFrames(totalTime.getDouble() * 1000);
 
       bindKeyFrameTag(kf, line, true);
-      getChildren().add(kf);
+      var tf = buildTimeFieldForKeyFrame(kf,true);
+      var delButton = buildDelButtonForKeyFrame(kf, tf);
+      getChildren().addAll(kf,tf,delButton);
 
       select(kf);
     });
@@ -146,7 +149,10 @@ public class BottomPane extends Pane {
     delButton.translateXProperty().bind(kf.xProperty());
     delButton.translateYProperty().bind(kf.yProperty().add(kf.heightProperty()).add(timeField.heightProperty()));
     var gameApp = FXGL.<GameApp>getAppCast();
-    delButton.setOnAction(_ -> deleteKeyFrame(kf));
+    delButton.setOnAction(_ -> {
+      deleteKeyFrame(kf);
+      getChildren().removeAll(kf, timeField, delButton);
+    });
     return delButton;
   }
 
