@@ -76,6 +76,7 @@ public class BottomPane extends Pane {
 
     bindKeyFrameTag(currentFrame, line, false);
     getChildren().add(currentFrame);
+//    select(currentFrame);
 //    for (int i = 0; i < keyFrames.size(); i++) {
 //      var kf = keyFrames.get(i);
 //      bindKeyFrameTag(kf, line, i > 0);
@@ -89,16 +90,12 @@ public class BottomPane extends Pane {
 //    }
 
     addButton.setOnAction(_ -> {
-      var app = FXGL.<GameApp>getAppCast();
-      currentFrame.deSelect();
-
       var kf = addKeyFrames(totalTime.getDouble() * 1000);
 
       bindKeyFrameTag(kf, line, true);
       getChildren().add(kf);
 
-      kf.select();
-      app.update();
+      select(kf);
     });
   }
 
@@ -115,6 +112,13 @@ public class BottomPane extends Pane {
     return new KeyFrame(20, 50).setTime(duration).setColor(Color.ORANGE);//LIGHTSEAGREEN
   }
 
+  private void select(KeyFrame keyFrame){
+    keyFrames.forEach(KeyFrame::deSelect);
+    keyFrame.select();
+    currentFrame = keyFrame;
+    FXGL.<GameApp>getAppCast().update();
+  }
+
   private void bindKeyFrameTag(KeyFrame kf, Line line, boolean draggable) {
     var ox = kf.getX();
 
@@ -123,12 +127,7 @@ public class BottomPane extends Pane {
       (keyFrameTime, totalTime, startX, endX) -> Math.min(startX + (endX - startX) * keyFrameTime / totalTime, endX)));
     kf.bindCenterY(line.startYProperty());
 
-    kf.setOnMousePressed(_ -> {
-      currentFrame.deSelect();
-      kf.select();
-      currentFrame = kf;
-      FXGL.<GameApp>getAppCast().update();
-    });
+    kf.setOnMousePressed(_ -> select(kf));
 
     if (draggable) {
       kf.setOnMouseDragged(e -> {
