@@ -5,10 +5,15 @@ import module javafx.controls;
 import com.almasb.fxgl.dsl.FXGL;
 import com.whitewoodcity.fxcityeditor.EditorApp;
 import com.whitewoodcity.fxcityeditor.GameApp;
+import com.whitewoodcity.fxgl.texture.TransitTexture;
+import com.whitewoodcity.fxgl.transition.RotateJsonKeys;
+import com.whitewoodcity.fxgl.vectorview.JVG;
 import com.whitewoodcity.javafx.binding.XBindings;
 import com.whitewoodcity.node.EditableRectangle;
 import com.whitewoodcity.node.KeyFrame;
 import com.whitewoodcity.node.NumberField;
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 import javafx.scene.control.Label;
 import javafx.util.Duration;
 
@@ -87,6 +92,8 @@ public class BottomPane extends Pane {
 
       select(kf);
     });
+
+    objectButton.setOnAction(_->showFrameData());
   }
 
   public KeyFrame addKeyFrames(double timeInMillis) {
@@ -208,5 +215,70 @@ public class BottomPane extends Pane {
       timeField.setDisable(true);
     }
     return timeField;
+  }
+
+  JsonObject extractJsonFromNode(Node node) {
+    var json = new JsonObject();
+
+    switch (node){
+      case JVG jvg -> {
+        var xy = jvg.getXY();
+        json.put(RotateJsonKeys.X.key(), xy.getX());
+        json.put(RotateJsonKeys.Y.key(), xy.getY());
+      }
+      case ImageView imageView -> {
+        json.put(RotateJsonKeys.X.key(), imageView.getX());
+        json.put(RotateJsonKeys.Y.key(), imageView.getY());
+      }
+      default -> {}
+    }
+    var rotates = new JsonArray();
+    for (var rotateRaw : node.getTransforms()) {
+      var rotate = (Rotate) rotateRaw;
+      var rjson = new JsonObject();
+      rjson.put(RotateJsonKeys.PIVOT_X.key(), rotate.getPivotX());
+      rjson.put(RotateJsonKeys.PIVOT_Y.key(), rotate.getPivotY());
+      rjson.put(RotateJsonKeys.ANGLE.key(), rotate.getAngle());
+      rotates.add(rjson);
+    }
+    json.put(RotateJsonKeys.ROTATES.key(), rotates);
+    return json;
+  }
+
+  private void showFrameData() {
+    ButtonType okButtonType = ButtonType.OK;
+    Dialog<ButtonType> dialog = new Dialog<>();
+
+    var vbox = new VBox();
+//    var kf = currentFrame;
+    var map = currentFrame.getRectBiMap();
+    vbox.setSpacing(5);
+
+    for (var item : EditorApp.getEditorApp().leftColumn.getTreeItems()) {
+      var rect = map.get(item);
+      var json = extractJsonFromNode(rect.getNode());
+      var textArea = new TextArea(json.toString());
+      textArea.setWrapText(true);
+      textArea.setEditable(false);
+      textArea.setPrefHeight(100);
+      var rotateNum = new TextField("" + json.getJsonArray(TransitTexture.JsonKeys.ROTATES.key()).size());
+      rotateNum.setEditable(false);
+      rotateNum.setPrefWidth(50);
+      var hbox = new HBox(new Label("# of rotates in transforms:"), rotateNum);
+      hbox.setSpacing(20);
+      var s = new Separator();
+      s.setPrefWidth(500);
+      s.setOrientation(Orientation.HORIZONTAL);
+      if(!vbox.getChildren().isEmpty())
+        vbox.getChildren().add(s);
+      vbox.getChildren().addAll( new Label(EditorApp.getEditorApp().leftColumn.getText(item)), hbox, textArea);
+    }
+
+    var scrollpane = new ScrollPane(vbox);
+    dialog.getDialogPane().setContent(scrollpane);
+    dialog.getDialogPane().getButtonTypes().add(okButtonType);
+    dialog.getDialogPane().lookupButton(okButtonType);
+
+    dialog.showAndWait();
   }
 }
