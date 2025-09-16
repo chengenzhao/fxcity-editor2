@@ -2,6 +2,7 @@ package com.whitewoodcity.control;
 
 import module java.base;
 import module javafx.controls;
+import module io.vertx.core;
 import com.almasb.fxgl.dsl.FXGL;
 import com.whitewoodcity.fxcityeditor.EditorApp;
 import com.whitewoodcity.fxcityeditor.GameApp;

@@ -1,5 +1,7 @@
 package com.whitewoodcity.control;
 
+import module java.base;
+import module javafx.controls;
 import com.almasb.fxgl.dsl.FXGL;
 import com.whitewoodcity.fxcityeditor.EditorApp;
 import com.whitewoodcity.fxcityeditor.GameApp;
@@ -7,23 +9,8 @@ import com.whitewoodcity.javafx.binding.XBindings;
 import com.whitewoodcity.node.EditableRectangle;
 import com.whitewoodcity.node.KeyFrame;
 import com.whitewoodcity.node.NumberField;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TreeItem;
-import javafx.scene.input.KeyCode;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.StrokeLineCap;
 import javafx.util.Duration;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class BottomPane extends Pane {
   public final List<KeyFrame> keyFrames = new ArrayList<>();
