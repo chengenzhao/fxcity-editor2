@@ -224,10 +224,10 @@ public class BottomPane extends Pane {
   JsonObject extractJsonFromNode(Node node) {
     var json = new JsonObject();
 
-    if(node instanceof EditableRectangle rect)
-      node = rect.getNode();
-
     switch (node){
+      case EditableRectangle rect -> {
+        return extractJsonFromNode(rect.getNode());
+      }
       case JVG jvg -> {
         var xy = jvg.getXY();
         json.put(RotateJsonKeys.X.key(), xy.getX());
