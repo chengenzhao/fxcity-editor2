@@ -150,25 +150,11 @@ public class BottomPane extends Pane {
     delButton.translateYProperty().bind(kf.yProperty().add(kf.heightProperty()).add(timeField.heightProperty()));
     var gameApp = FXGL.<GameApp>getAppCast();
     delButton.setOnAction(_ -> {
-      deleteKeyFrame(kf);
+      keyFrames.remove(kf);
       getChildren().removeAll(kf, timeField, delButton);
+      select(keyFrames.getLast());
     });
     return delButton;
-  }
-
-  public void deleteKeyFrame(KeyFrame kf) {
-    var gameApp = FXGL.<GameApp>getAppCast();
-    currentFrame.deSelect();
-    keyFrames.remove(kf);
-//    for (var map : gameApp.rectMaps.values()) {
-//      map.remove(kf);
-//    }
-//    for (var map : gameApp.arrowMaps.values()) {
-//      map.remove(kf);
-//    }
-    currentFrame = keyFrames.getFirst();
-    currentFrame.select();
-    gameApp.update();
   }
 
   public EditableRectangle delete(TreeItem<Node> item){
