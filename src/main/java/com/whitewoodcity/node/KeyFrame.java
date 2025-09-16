@@ -79,9 +79,11 @@ public class KeyFrame extends Rectangle {
   public void copyFrom(KeyFrame keyFrame){
     var keySet = keyFrame.rectBiMap.keySet();
     var gameApp = FXGL.<GameApp>getAppCast();
-    for(var hBox:keySet){
-      var texture = keyFrame.rectBiMap.get(hBox).clone();
-      this.rectBiMap.put(hBox, texture);
+    for(var item:keySet){
+      var rect = keyFrame.rectBiMap.get(item).clone();
+      this.rectBiMap.put(item, rect);
+
+      rect.setOnMousePressed(_ -> gameApp.selectRect(rect));
 
 //      texture.setOnMouseClicked(_ -> selectTreeItem(hBox));
 //      texture.children().addListener((ListChangeListener<RotateTransit2DTexture>) _ -> selectTreeItem(hBox));

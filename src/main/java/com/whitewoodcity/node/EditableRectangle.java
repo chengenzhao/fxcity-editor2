@@ -1,6 +1,8 @@
 package com.whitewoodcity.node;
 
 import module javafx.controls;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.whitewoodcity.fxgl.texture.Texture;
 import com.whitewoodcity.fxgl.vectorview.JVG;
 import io.vertx.core.json.JsonObject;
@@ -10,6 +12,13 @@ import javafx.scene.shape.Rectangle;
 import java.util.List;
 
 public class EditableRectangle extends Rectangle {
+
+  private final static BiMap<EditableRectangle, Node> biMap = HashBiMap.create();
+
+  public static EditableRectangle getRectByNode(Node node){
+    return biMap.inverse().get(node);
+  }
+
   private final ObservableList<Rotate> rotates = FXCollections.observableArrayList();
   private final Rotate rotate;
 
@@ -23,6 +32,23 @@ public class EditableRectangle extends Rectangle {
     this.node = node;
 
     addRotate(rotate);
+
+    ChangeListener<Number> c = (_, _, _) -> {
+      switch (node) {
+        case JVG jvg -> jvg.set(getX(), getY());
+        case ImageView imageView -> {
+          imageView.setX(getX());
+          imageView.setY(getY());
+        }
+        default -> {
+        }
+      }
+    };
+    xProperty().addListener(c);
+    yProperty().addListener(c);
+
+    biMap.put(this, node);
+    this.setFill(Color.TRANSPARENT);
   }
 
   public EditableRectangle(Node node) {
@@ -191,6 +217,8 @@ public class EditableRectangle extends Rectangle {
     rect.setTranslateZ(this.getTranslateZ());
     rect.setX(this.getX());
     rect.setY(this.getY());
+    rect.setWidth(this.getWidth());
+    rect.setHeight(this.getHeight());
     return rect;
   }
 

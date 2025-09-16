@@ -43,7 +43,8 @@ public class GameApp extends GameApplication {
 
   public void clear(){
     for(var v:entity.getViewComponent().getChildren()){
-      var rect = EditorApp.getEditorApp().mainMenu.getRectByNode(v);
+      var rect = EditableRectangle.getRectByNode(v);
+      deSelectRect(rect);
       entity.getViewComponent().removeDevChild(rect);
     }
     entity.getViewComponent().clearChildren();
@@ -59,53 +60,6 @@ public class GameApp extends GameApplication {
       rect.setOnMousePressed(_ -> selectRect(rect));
     }
     EditorApp.getEditorApp().rightColumn.update();
-  }
-
-  public EditableRectangle addNode(Node node) {
-    node.setMouseTransparent(true);
-    entity.getViewComponent().addChild(node);
-    var rect = new EditableRectangle(node);
-    switch (node) {
-      case JVG jvg -> {
-        var d = jvg.getDimension();
-        rect.setWidth(d.getWidth());
-        rect.setHeight(d.getHeight());
-
-        var xy = jvg.getXY();
-        rect.setX(xy.getX());
-        rect.setY(xy.getY());
-      }
-      case ImageView imageView-> {
-        rect.setWidth(imageView.getFitWidth());
-        rect.setHeight(imageView.getFitHeight());
-        rect.setX(imageView.getX());
-        rect.setY(imageView.getY());
-      }
-      default -> {
-      }
-    }
-
-    rect.setFill(Color.TRANSPARENT);
-
-    entity.getViewComponent().addDevChild(rect);
-
-    ChangeListener<Number> c = (_, _, _) -> {
-      switch (node) {
-        case JVG jvg -> jvg.set(rect.getX(), rect.getY());
-        case ImageView imageView -> {
-          imageView.setX(rect.getX());
-          imageView.setY(rect.getY());
-        }
-        default -> {
-        }
-      }
-    };
-    rect.xProperty().addListener(c);
-    rect.yProperty().addListener(c);
-
-    rect.setOnMousePressed(_ -> selectRect(rect));
-
-    return rect;
   }
 
   public EditableRectangle getCurrentRect() {
@@ -162,7 +116,6 @@ public class GameApp extends GameApplication {
     });
 
     arrow.getOrigin().setOnMousePressed(oe -> {
-//      selectTreeItem(hBox);
       var op = oe;//rect.transform(new Point2D(oe.getX(), oe.getY()));
       var ox = op.getX();
       var oy = op.getY();
@@ -185,7 +138,6 @@ public class GameApp extends GameApplication {
     });
 
     arrow.getHeadB().setOnMousePressed(oe -> {
-//      selectTreeItem(hBox);
       var ox = oe.getX();
       arrow.getHeadB().setOnMouseDragged(e -> {
         double changeInX = e.getX() - ox;
@@ -195,7 +147,6 @@ public class GameApp extends GameApplication {
     });
 
     arrow.getMainLine().setOnMousePressed(oe -> {
-//      selectTreeItem(hBox);
       var ox = oe.getX();
       arrow.getMainLine().setOnMouseDragged(e -> {
         double changeInX = e.getX() - ox;

@@ -3,8 +3,6 @@ package com.whitewoodcity.control;
 import module java.base;
 import module javafx.controls;
 import com.almasb.fxgl.dsl.FXGL;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import com.whitewoodcity.fxcityeditor.EditorApp;
 import com.whitewoodcity.fxcityeditor.GameApp;
 import com.whitewoodcity.fxgl.vectorview.JVG;
@@ -41,16 +39,9 @@ public class MainMenu extends MenuBar {
     });
   }
 
-  private final BiMap<EditableRectangle, Node> biMap = HashBiMap.create();
-
-  public EditableRectangle getRectByNode(Node node){
-    return biMap.inverse().get(node);
-  }
 
   public EditableRectangle createRect(Node node){
     var rect = new EditableRectangle(node);
-    biMap.put(rect, node);
-    rect.setFill(Color.TRANSPARENT);
 
     switch (node) {
       case JVG jvg -> {
@@ -72,19 +63,6 @@ public class MainMenu extends MenuBar {
       }
     }
 
-    ChangeListener<Number> c = (_, _, _) -> {
-      switch (node) {
-        case JVG jvg -> jvg.set(rect.getX(), rect.getY());
-        case ImageView imageView -> {
-          imageView.setX(rect.getX());
-          imageView.setY(rect.getY());
-        }
-        default -> {
-        }
-      }
-    };
-    rect.xProperty().addListener(c);
-    rect.yProperty().addListener(c);
     return rect;
   };
 }

@@ -17,52 +17,56 @@ public class LeftColumn extends VBox {
 
   private final TreeView<Node> treeView = new TreeView<>();
 
-  public LeftColumn(){
+  public LeftColumn() {
     this.getChildren().add(treeView);
 
     var root = new TreeItem<Node>();
     treeView.setRoot(root);
     treeView.setShowRoot(false);
 
-    treeView.getSelectionModel().selectedItemProperty().addListener((_,old,newV)->{
+    treeView.getSelectionModel().selectedItemProperty().addListener((_, old, newV) -> {
       var map = EditorApp.getEditorApp().bottomPane.currentFrame.getRectBiMap();
-      if(old!=null){
+      if (old != null) {
         FXGL.<GameApp>getAppCast().deSelectRect(map.get(old));
       }
-      if(newV!=null){
+      if (newV != null) {
         FXGL.<GameApp>getAppCast().selectRect(map.get(newV));
       }
     });
   }
 
-  public void select(TreeItem<Node> item){
+  public void select(TreeItem<Node> item) {
     treeView.getSelectionModel().select(item);
   }
 
-  public ObservableList<TreeItem<Node>> getTreeItems(){
+  public ObservableList<TreeItem<Node>> getTreeItems() {
     return treeView.getRoot().getChildren();
   }
 
-  public TreeItem<Node> addNode(String name){
+  public TreeItem<Node> addNode(String name) {
     var root = treeView.getRoot();
     var item = generateNodeItem(name, root);
+    item.getValue().setOnMousePressed(_->{
+      var map = EditorApp.getEditorApp().bottomPane.currentFrame.getRectBiMap();
+      FXGL.<GameApp>getAppCast().selectRect(map.get(item));
+    });
     root.getChildren().add(item);
     return item;
   }
 
-  public String getText(TreeItem<Node> item){
-    return ((TextField)((HBox)item.getValue()).getChildren().get(1)).getText();
+  public String getText(TreeItem<Node> item) {
+    return ((TextField) ((HBox) item.getValue()).getChildren().get(1)).getText();
   }
 
-  private TreeItem<Node> generateNodeItem(String name, TreeItem<Node> root){
+  private TreeItem<Node> generateNodeItem(String name, TreeItem<Node> root) {
     var hBox = new HBox();
     var treeItem = new TreeItem<Node>(hBox);
 
     var textField = new TextField(name);
     textField.setPrefWidth(100);
 
-    textField.focusedProperty().addListener((_,_,n)->{
-      if(n){
+    textField.focusedProperty().addListener((_, _, n) -> {
+      if (n) {
         treeView.getSelectionModel().select(treeItem);
       }
     });
@@ -75,8 +79,8 @@ public class LeftColumn extends VBox {
     var del = new Button("×");
     hBox.getChildren().addAll(upNDown, textField, del);
 
-    del.setOnAction(_->{
-      if(treeView.getSelectionModel().getSelectedItem() == treeItem){
+    del.setOnAction(_ -> {
+      if (treeView.getSelectionModel().getSelectedItem() == treeItem) {
         treeView.getSelectionModel().select(null);
       }
 
