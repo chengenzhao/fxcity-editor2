@@ -91,7 +91,8 @@ public class BottomPane extends Pane {
       var items = EditorApp.getEditorApp().leftColumn.getTreeItems();
       for(int i=0;i<items.size();i++){
         var item = items.get(i);
-        var rect = keyFrames.getFirst().getRectBiMap().get(item).clone();
+        var rect = keyFrames.getFirst().getRectBiMap().get(item).cloneWithTransforms();
+        rect.update();
         var node = rect.getNode();
         var json = jsonArray.getJsonArray(i);
         app.entity.getViewComponent().addChild(node);

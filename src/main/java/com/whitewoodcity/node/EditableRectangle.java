@@ -222,6 +222,13 @@ public class EditableRectangle extends Rectangle {
     return rect;
   }
 
+  public EditableRectangle cloneWithTransforms() {
+    var rect = this.clone();
+    rect.rotates.clear();
+    rotates.forEach(r -> rect.addRotate(r.clone()));
+    return rect;
+  }
+
   public void show(String string) {
     var json = new JsonObject(string);
 
