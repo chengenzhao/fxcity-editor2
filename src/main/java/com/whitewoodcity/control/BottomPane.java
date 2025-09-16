@@ -7,6 +7,7 @@ import com.whitewoodcity.fxcityeditor.EditorApp;
 import com.whitewoodcity.fxcityeditor.GameApp;
 import com.whitewoodcity.fxgl.texture.TransitTexture;
 import com.whitewoodcity.fxgl.transition.RotateJsonKeys;
+import com.whitewoodcity.fxgl.transition.Rotates;
 import com.whitewoodcity.fxgl.vectorview.JVG;
 import com.whitewoodcity.javafx.binding.XBindings;
 import com.whitewoodcity.node.EditableRectangle;
@@ -69,18 +70,6 @@ public class BottomPane extends Pane {
     bindKeyFrameTag(currentFrame, line, false);
     var timeField = buildTimeFieldForKeyFrame(currentFrame,false);
     getChildren().addAll(currentFrame, timeField);
-//    select(currentFrame);
-//    for (int i = 0; i < keyFrames.size(); i++) {
-//      var kf = keyFrames.get(i);
-//      bindKeyFrameTag(kf, line, i > 0);
-//      var timeField = buildTimeFieldForKeyFrame(kf, i > 0);
-//      getChildren().addAll(kf,timeField);//
-//
-//      if (i > 0) {
-//        var delButton = buildDelButtonForKeyFrame(kf, timeField);
-//        getChildren().add(delButton);
-//      }
-//    }
 
     addButton.setOnAction(_ -> {
       var kf = addKeyFrames(totalTime.getDouble() * 1000);
@@ -96,7 +85,19 @@ public class BottomPane extends Pane {
     objectButton.setOnAction(_->showFrameData());
 
     playButton.setOnAction(_->{
-      IO.println(buildTransitionJson());
+      var jsonArray = buildTransitionJson();
+      var app = FXGL.<GameApp>getAppCast();
+      app.clear();
+      var items = EditorApp.getEditorApp().leftColumn.getTreeItems();
+      for(int i=0;i<items.size();i++){
+        var item = items.get(i);
+        var rect = keyFrames.getFirst().getRectBiMap().get(item).clone();
+        var node = rect.getNode();
+        var json = jsonArray.getJsonArray(i);
+        app.entity.getViewComponent().addChild(node);
+        var rotates = new Rotates(node);
+        rotates.buildTransition("",json.toString()).play();
+      }
     });
   }
 
@@ -296,6 +297,7 @@ public class BottomPane extends Pane {
   }
 
   JsonArray buildTransitionJson() {
+    FXGL.<GameApp>getAppCast().update();
     var arrayNode = new JsonArray();
     for (var item : EditorApp.getEditorApp().leftColumn.getTreeItems()) {
       var animationData = new JsonArray();
@@ -304,11 +306,12 @@ public class BottomPane extends Pane {
       animationData.addAll(new JsonArray(jsons));
 
       var rect = keyFrames.getFirst().getRectBiMap().get(item);
-      var jsonNode = extractJsonFromNode(totalTime.getDouble() * 1000, rect.getNode());
+      var jsonNode = extractJsonFromNode(totalTime.getDouble() * 1000, rect);
       animationData.add(jsonNode);
 
       arrayNode.add(animationData);
     }
     return arrayNode;
   }
+
 }
