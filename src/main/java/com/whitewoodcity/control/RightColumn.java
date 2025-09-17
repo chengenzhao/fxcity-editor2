@@ -19,6 +19,8 @@ public class RightColumn extends GridPane {
   ChoiceBox<TreeItem<Node>> choiceBox = new ChoiceBox<>();
   CheckBox visible = new CheckBox();
 
+  private final int unchangedRows = 2;
+
   public RightColumn() {
     this.setPadding(new Insets(10));
     this.setVgap(10);
@@ -89,7 +91,7 @@ public class RightColumn extends GridPane {
 
     visible.selectedProperty().bindBidirectional(rect.getNode().visibleProperty());
 
-    this.add(new Label("PivotX:"),0,2);
+    this.add(new Label("PivotX:"),0,unchangedRows);
     var pivotX = new NumberField(Integer.MIN_VALUE,Integer.MAX_VALUE);
     pivotX.setPrefWidth(100);
     pivotX.valueProperty().bindBidirectional(rect.getRotation().pivotXProperty());
@@ -97,9 +99,9 @@ public class RightColumn extends GridPane {
       if(newV.doubleValue() > rect.getX() + rect.getWidth()) pivotX.valueProperty().set(rect.getX() + rect.getWidth());
       if(newV.doubleValue() < rect.getX()) pivotX.valueProperty().set(rect.getX());
     });
-    this.add(pivotX, 1,2);
+    this.add(pivotX, 1,unchangedRows);
 
-    this.add(new Label("PivotY:"),0,3);
+    this.add(new Label("PivotY:"),0,unchangedRows+1);
     var pivotY = new NumberField(Integer.MIN_VALUE,Integer.MAX_VALUE);
     pivotY.prefWidthProperty().bind(pivotX.prefWidthProperty());
     pivotY.valueProperty().bindBidirectional(rect.getRotation().pivotYProperty());
@@ -107,42 +109,42 @@ public class RightColumn extends GridPane {
       if(newV.doubleValue() > rect.getY() + rect.getHeight()) pivotY.valueProperty().set(rect.getY() + rect.getHeight());
       if(newV.doubleValue() < rect.getY()) pivotY.valueProperty().set(rect.getY());
     });
-    this.add(pivotY, 1,3);
+    this.add(pivotY, 1,unchangedRows+1);
 
-    this.add(new Label("Angle:"),0,4);
+    this.add(new Label("Angle:"),0,unchangedRows+2);
     var angle = new NumberField(0,720);
     angle.prefWidthProperty().bind(pivotX.prefWidthProperty());
     angle.valueProperty().bindBidirectional(rect.getRotation().angleProperty());
     angle.setOnAction(_-> rect.update());
-    this.add(angle, 1,4);
+    this.add(angle, 1,unchangedRows+2);
 
     for(int j=1;j<rect.getRotates().size();j++){
 
       var rotate = rect.getRotates().get(j);
       int i = j-1;
 
-      this.add(new Separator(),0,5 + 4*i, 2,1);
+      this.add(new Separator(),0,unchangedRows+3 + 4*i, 2,1);
 
-      this.add(new Label("PivotX:"),0,6 + i*4);
+      this.add(new Label("PivotX:"),0,unchangedRows+4 + i*4);
       var px = new TextField();
       px.prefWidthProperty().bind(pivotX.prefWidthProperty());
       px.textProperty().bind(rotate.pivotXProperty().map(p -> p.doubleValue()+""));
       px.setEditable(false);
-      this.add(px, 1,6 + i*4);
+      this.add(px, 1,unchangedRows+4 + i*4);
 
-      this.add(new Label("PivotY:"),0,7 + i*4);
+      this.add(new Label("PivotY:"),0,unchangedRows+5 + i*4);
       var py = new TextField();
       py.prefWidthProperty().bind(px.prefWidthProperty());
       py.textProperty().bind(rotate.pivotYProperty().map(p -> p.doubleValue()+""));
       py.setEditable(false);
-      this.add(py, 1,7 + i*4);
+      this.add(py, 1,unchangedRows+5 + i*4);
 
-      this.add(new Label("Angle:"),0,8 + i*4);
+      this.add(new Label("Angle:"),0,unchangedRows+6 + i*4);
       var af = new TextField();
       af.prefWidthProperty().bind(px.prefWidthProperty());
       af.textProperty().bind(rotate.angleProperty().map(a -> a.doubleValue()+""));
       af.setEditable(false);
-      this.add(af, 1,8 + i*4);
+      this.add(af, 1,unchangedRows+6 + i*4);
     }
   }
 
