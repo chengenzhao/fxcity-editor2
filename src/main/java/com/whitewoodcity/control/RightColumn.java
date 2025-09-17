@@ -23,7 +23,8 @@ public class RightColumn extends GridPane {
     this.setPadding(new Insets(10));
     this.setVgap(10);
     this.setHgap(10);
-    this.add(choiceBox,0,0);
+    this.add(new Label("Parent:"),0,0);
+    this.add(choiceBox,1,0);
     this.add(new Label("Visible:"),0,1);
     this.add(visible, 1,1);
   }
@@ -38,7 +39,7 @@ public class RightColumn extends GridPane {
       visible.selectedProperty().unbindBidirectional(rect.getNode().visibleProperty());
     }
 
-    this.getChildren().remove(3,this.getChildren().size());
+    this.getChildren().remove(4,this.getChildren().size());
   }
 
   public void update(){
