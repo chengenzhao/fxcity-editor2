@@ -96,8 +96,7 @@ public class LeftColumn extends VBox {
       if (i > 0) {
         root.getChildren().add(i - 1, root.getChildren().remove(i));
       }
-//      selectTreeItem(hBox);
-//      fireEvent(keyFrames.get(currentKeyFrame));
+      FXGL.<GameApp>getAppCast().update();
     });
 
     down.setOnAction(_ -> {
@@ -105,8 +104,7 @@ public class LeftColumn extends VBox {
       if (i < root.getChildren().size() - 1) {
         root.getChildren().add(i + 1, root.getChildren().remove(i));
       }
-//      selectTreeItem(hBox);
-//      fireEvent(keyFrames.get(currentKeyFrame));
+      FXGL.<GameApp>getAppCast().update();
     });
 
     return treeItem;
