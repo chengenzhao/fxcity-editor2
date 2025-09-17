@@ -180,22 +180,27 @@ public class RightColumn extends GridPane {
   }
 
   private void multiply(double f){
-    var node = rect.getNode();
-    switch (node){
-      case JVG jvg ->{
-        var xy = jvg.getXY();
-        jvg.trim().zoom(f).move(xy);
-        var d = jvg.getDimension();
-        rect.setWidth(d.getWidth());
-        rect.setHeight(d.getHeight());
+    var item = EditorApp.getEditorApp().bottomPane.currentFrame.getRectBiMap().inverse().get(rect);
+    for(var kf:EditorApp.getEditorApp().bottomPane.keyFrames){
+      var rect = kf.getRectBiMap().get(item);
+      var node = rect.getNode();
+      switch (node){
+        case JVG jvg ->{
+          var xy = jvg.getXY();
+          jvg.trim().zoom(f).move(xy);
+          var d = jvg.getDimension();
+          rect.setWidth(d.getWidth());
+          rect.setHeight(d.getHeight());
+        }
+        case ImageView imageView ->{
+          imageView.setFitWidth(imageView.getFitWidth() * f);
+          imageView.setFitHeight(imageView.getFitHeight() * f);
+          rect.setWidth(imageView.getFitWidth());
+          rect.setHeight(imageView.getFitHeight());
+        }
+        default -> {}
       }
-      case ImageView imageView ->{
-        imageView.setFitWidth(imageView.getFitWidth() * f);
-        imageView.setFitHeight(imageView.getFitHeight() * f);
-        rect.setWidth(imageView.getFitWidth());
-        rect.setHeight(imageView.getFitHeight());
-      }
-      default -> {}
     }
+
   }
 }
