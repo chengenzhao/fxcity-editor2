@@ -51,9 +51,9 @@ public class BottomPane extends Pane {
     line.setStroke(Color.DARKCYAN);
     line.setStrokeWidth(10);
     line.setStrokeLineCap(StrokeLineCap.ROUND);
-    line.startXProperty().bind(widthProperty().map(w -> w.doubleValue()/5));
+    line.startXProperty().bind(widthProperty().map(w -> w.doubleValue() / 5));
     line.startYProperty().bind(hbox.layoutYProperty().add(hbox.heightProperty().multiply(2)));
-    line.endXProperty().bind(widthProperty().map(w -> w.doubleValue()*4/5));
+    line.endXProperty().bind(widthProperty().map(w -> w.doubleValue() * 4 / 5));
     line.endYProperty().bind(line.startYProperty());
 
     var anchor = new Line();
@@ -68,38 +68,48 @@ public class BottomPane extends Pane {
     this.getChildren().addAll(hbox, line, anchor);
 
     bindKeyFrameTag(currentFrame, line, false);
-    var timeField = buildTimeFieldForKeyFrame(currentFrame,false);
+    var timeField = buildTimeFieldForKeyFrame(currentFrame, false);
     getChildren().addAll(currentFrame, timeField);
 
     addButton.setOnAction(_ -> {
       var kf = addKeyFrames(totalTime.getDouble() * 1000);
 
       bindKeyFrameTag(kf, line, true);
-      var tf = buildTimeFieldForKeyFrame(kf,true);
+      var tf = buildTimeFieldForKeyFrame(kf, true);
       var delButton = buildDelButtonForKeyFrame(kf, tf);
-      getChildren().addAll(kf,tf,delButton);
+      getChildren().addAll(kf, tf, delButton);
 
       select(kf);
     });
 
-    objectButton.setOnAction(_->showFrameData());
+    objectButton.setOnAction(_ -> showFrameData());
+    arrayButton.setOnAction(_-> showTransitData());
 
-    playButton.setOnAction(_->{
-      var jsonArray = buildTransitionJson();
-      var app = FXGL.<GameApp>getAppCast();
-      app.clear();
-      var items = EditorApp.getEditorApp().leftColumn.getTreeItems();
-      for(int i=0;i<items.size();i++){
-        var item = items.get(i);
-        var rect = keyFrames.getFirst().getRectBiMap().get(item).cloneWithTransforms();
-        rect.update();
-        var node = rect.getNode();
-        var json = jsonArray.getJsonArray(i);
-        app.entity.getViewComponent().addChild(node);
-        var rotates = new Rotates(node);
-        rotates.buildTransition("",json.toString()).play();
-      }
-    });
+    playButton.setOnAction(_ -> playTransition());
+    loopButton.setOnAction(_ -> playTransition(Timeline.INDEFINITE));
+  }
+
+  private void playTransition() {
+    playTransition(1);
+  }
+
+  private void playTransition(int cycleCount) {
+    var jsonArray = buildTransitionJson();
+    var app = FXGL.<GameApp>getAppCast();
+    app.clear();
+    var items = EditorApp.getEditorApp().leftColumn.getTreeItems();
+    for (int i = 0; i < items.size(); i++) {
+      var item = items.get(i);
+      var rect = keyFrames.getFirst().getRectBiMap().get(item).cloneWithTransforms();
+      rect.update();
+      var node = rect.getNode();
+      var json = jsonArray.getJsonArray(i);
+      app.entity.getViewComponent().addChild(node);
+      var rotates = new Rotates(node);
+      var tran = rotates.buildTransition("", json.toString());
+      tran.setCycleCount(cycleCount);
+      tran.play();
+    }
   }
 
   public KeyFrame addKeyFrames(double timeInMillis) {
@@ -115,7 +125,7 @@ public class BottomPane extends Pane {
     return new KeyFrame(20, 50).setTime(duration).setColor(Color.ORANGE);//LIGHTSEAGREEN
   }
 
-  private void select(KeyFrame keyFrame){
+  private void select(KeyFrame keyFrame) {
     keyFrames.forEach(KeyFrame::deSelect);
     keyFrame.select();
     currentFrame = keyFrame;
@@ -157,16 +167,16 @@ public class BottomPane extends Pane {
     return delButton;
   }
 
-  public EditableRectangle delete(TreeItem<Node> item){
+  public EditableRectangle delete(TreeItem<Node> item) {
     var rect = currentFrame.getRectBiMap().get(item);
 
-    if(rect.parent()!=null){
-      EditorApp.getEditorApp().bottomPane.setParent(item,null);
+    if (rect.parent() != null) {
+      EditorApp.getEditorApp().bottomPane.setParent(item, null);
     }
-    if(!rect.children().isEmpty()){
+    if (!rect.children().isEmpty()) {
       new ArrayList<>(rect.children()).forEach(child -> {
         var i = currentFrame.getRectBiMap().inverse().get(child);
-        EditorApp.getEditorApp().bottomPane.setParent(i,null);
+        EditorApp.getEditorApp().bottomPane.setParent(i, null);
       });
     }
 
@@ -178,12 +188,12 @@ public class BottomPane extends Pane {
     return rect;
   }
 
-  public void setParent(TreeItem<Node> child, TreeItem<Node> parent){
+  public void setParent(TreeItem<Node> child, TreeItem<Node> parent) {
     keyFrames.forEach(f -> {
       var m = f.getRectBiMap();
       var c = m.get(child);
       var p = m.get(parent);
-      if(c!=null) c.setParent(p);
+      if (c != null) c.setParent(p);
     });
   }
 
@@ -226,7 +236,7 @@ public class BottomPane extends Pane {
   JsonObject extractJsonFromNode(Node node) {
     var json = new JsonObject();
 
-    switch (node){
+    switch (node) {
       case EditableRectangle rect -> {
         return extractJsonFromNode(rect.getNode());
       }
@@ -239,7 +249,8 @@ public class BottomPane extends Pane {
         json.put(RotateJsonKeys.X.key(), imageView.getX());
         json.put(RotateJsonKeys.Y.key(), imageView.getY());
       }
-      default -> {}
+      default -> {
+      }
     }
     var rotates = new JsonArray();
     for (var rotateRaw : node.getTransforms()) {
@@ -265,7 +276,7 @@ public class BottomPane extends Pane {
 
     for (var item : EditorApp.getEditorApp().leftColumn.getTreeItems()) {
       var rect = map.get(item);
-      var json = extractJsonFromNode(rect.getNode());
+      var json = extractJsonFromNode(rect);
       var textArea = new TextArea(json.toString());
       textArea.setWrapText(true);
       textArea.setEditable(false);
@@ -278,9 +289,9 @@ public class BottomPane extends Pane {
       var s = new Separator();
       s.setPrefWidth(500);
       s.setOrientation(Orientation.HORIZONTAL);
-      if(!vbox.getChildren().isEmpty())
+      if (!vbox.getChildren().isEmpty())
         vbox.getChildren().add(s);
-      vbox.getChildren().addAll( new Label(EditorApp.getEditorApp().leftColumn.getText(item)), hbox, textArea);
+      vbox.getChildren().addAll(new Label(EditorApp.getEditorApp().leftColumn.getText(item)), hbox, textArea);
     }
 
     var scrollpane = new ScrollPane(vbox);
@@ -315,4 +326,48 @@ public class BottomPane extends Pane {
     return arrayNode;
   }
 
+  void showTransitData() {
+    ButtonType okButtonType = ButtonType.OK;
+    Dialog<ButtonType> dialog = new Dialog<>();
+
+    var vbox = new VBox();
+    vbox.setSpacing(5);
+
+    for (var item : EditorApp.getEditorApp().leftColumn.getTreeItems()) {
+      var animationData = new JsonArray();
+
+      var jsons = keyFrames.stream().map(kf -> extractJsonFromNode(kf.getTimeInSeconds() * 1000, kf.getRectBiMap().get(item))).toList();
+      animationData.addAll(new JsonArray(jsons));
+
+      var texture = keyFrames.getFirst().getRectBiMap().get(item);
+      var jsonNode = extractJsonFromNode(totalTime.getDouble() * 1000, texture);
+      animationData.add(jsonNode);
+
+      var textArea = new TextArea(animationData.toString());
+      textArea.setWrapText(true);
+      textArea.setPrefHeight(100);
+      textArea.setEditable(false);
+
+      var rotateNum = new TextField("" + jsons.getFirst().getJsonArray(TransitTexture.JsonKeys.ROTATES.key()).size());
+      rotateNum.setEditable(false);
+      rotateNum.setPrefWidth(50);
+      var hbox = new HBox(new Label("# of rotates in transforms:"), rotateNum);
+      hbox.setSpacing(20);
+
+      var s = new Separator();
+      s.setPrefWidth(500);
+      s.setOrientation(Orientation.HORIZONTAL);
+      if(!vbox.getChildren().isEmpty())
+        vbox.getChildren().add(s);
+
+      vbox.getChildren().addAll(new Label(EditorApp.getEditorApp().leftColumn.getText(item)), hbox, textArea);
+    }
+
+    var scrollpane = new ScrollPane(vbox);
+    dialog.getDialogPane().setContent(scrollpane);
+    dialog.getDialogPane().getButtonTypes().add(okButtonType);
+    dialog.getDialogPane().lookupButton(okButtonType);
+
+    dialog.showAndWait();
+  }
 }
