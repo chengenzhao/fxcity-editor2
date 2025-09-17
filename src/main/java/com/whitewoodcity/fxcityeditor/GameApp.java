@@ -54,7 +54,7 @@ public class GameApp extends GameApplication {
   public void update(){
     clear();
     var frame = EditorApp.getEditorApp().bottomPane.currentFrame;
-    for(var item:EditorApp.getEditorApp().leftColumn.getTreeItems()){
+    for(var item:EditorApp.getEditorApp().leftColumn.getTreeItems().reversed()){
       var rect = frame.getRectBiMap().get(item);
       entity.getViewComponent().addChild(rect.getNode());
       entity.getViewComponent().addDevChild(rect);
