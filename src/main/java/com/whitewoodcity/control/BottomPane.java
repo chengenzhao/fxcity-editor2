@@ -87,6 +87,8 @@ public class BottomPane extends Pane {
 
     playButton.setOnAction(_ -> playTransition());
     loopButton.setOnAction(_ -> playTransition(Timeline.INDEFINITE));
+
+    stopButton.setOnAction(_->select(currentFrame));
   }
 
   private void playTransition() {
