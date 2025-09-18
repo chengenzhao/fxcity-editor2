@@ -19,6 +19,7 @@ public class MainMenu extends MenuBar {
   public static final String NAME = "name";
   public static final String JSON = "json";
   public static final String ITEMS = "items";
+  public static final String KEY_FRAMES = "keyFrames";
 
   public MainMenu() {
     menu.getItems().addAll(save, load, clear);
@@ -41,12 +42,19 @@ public class MainMenu extends MenuBar {
               clear();
               var jsonString = Files.readString(Paths.get(file.getPath()));
               var json = new JsonObject(jsonString);
-              var jsonArray = json.getJsonArray(ITEMS);
-              for(var obj:jsonArray){
+              var items = json.getJsonArray(ITEMS);
+              var frames = json.getJsonArray(KEY_FRAMES);
+              for(var obj:items){
                 if(obj instanceof JsonObject object){
                   buildItem(object.getString(NAME),object.getJsonArray(JSON).toString());
                 }
               }
+              frames.getJsonArray(0).stream().skip(1).filter(JsonObject.class::isInstance)
+                .map(JsonObject.class::cast).forEach(e -> {
+                  var time = e.getNumber("time").doubleValue();
+                  EditorApp.getEditorApp().bottomPane.buildKeyFrame(time);
+                });
+
             }
             default -> {
             }
@@ -69,6 +77,7 @@ public class MainMenu extends MenuBar {
       try {
         var json = new JsonObject();
         json.put(ITEMS,buildItemJson());
+        json.put(KEY_FRAMES, EditorApp.getEditorApp().bottomPane.buildTransitionJson());
         Files.write(Paths.get(file.getPath()), json.toString().getBytes());
       } catch (IOException e) {
         throw new RuntimeException(e);

@@ -25,6 +25,7 @@ public class BottomPane extends Pane {
   public KeyFrame currentFrame;
 
   public NumberField totalTime = new NumberField(100);
+  public Line line;
 
   public BottomPane() {
     this.setPrefHeight(300);
@@ -49,7 +50,7 @@ public class BottomPane extends Pane {
     hbox.layoutXProperty().bind(this.widthProperty().subtract(hbox.widthProperty()));
     hbox.getChildren().addAll(loopButton, playButton, pauseButton, stopButton, new Label("Total Time: "), totalTime, addButton, objectButton, arrayButton);
 
-    var line = new Line();
+    line = new Line();
     line.setStroke(Color.DARKCYAN);
     line.setStrokeWidth(10);
     line.setStrokeLineCap(StrokeLineCap.ROUND);
@@ -73,16 +74,7 @@ public class BottomPane extends Pane {
     var timeField = buildTimeFieldForKeyFrame(currentFrame, false);
     getChildren().addAll(currentFrame, timeField);
 
-    addButton.setOnAction(_ -> {
-      var kf = addKeyFrames(totalTime.getDouble() * 1000);
-
-      bindKeyFrameTag(kf, line, true);
-      var tf = buildTimeFieldForKeyFrame(kf, true);
-      var delButton = buildDelButtonForKeyFrame(kf, tf);
-      getChildren().addAll(kf, tf, delButton);
-
-      select(kf);
-    });
+    addButton.setOnAction(_ -> buildKeyFrame(totalTime.getDouble() * 1000));
 
     objectButton.setOnAction(_ -> showFrameData());
     arrayButton.setOnAction(_ -> showTransitData());
@@ -91,6 +83,17 @@ public class BottomPane extends Pane {
     loopButton.setOnAction(_ -> playTransition(Timeline.INDEFINITE));
 
     stopButton.setOnAction(_ -> select(currentFrame));
+  }
+
+  public void buildKeyFrame(double timeInMillis){
+    var kf = addKeyFrame(timeInMillis);
+
+    bindKeyFrameTag(kf, line, true);
+    var tf = buildTimeFieldForKeyFrame(kf, true);
+    var delButton = buildDelButtonForKeyFrame(kf, tf);
+    getChildren().addAll(kf, tf, delButton);
+
+    select(kf);
   }
 
   private void playTransition() {
@@ -116,7 +119,7 @@ public class BottomPane extends Pane {
     }
   }
 
-  public KeyFrame addKeyFrames(double timeInMillis) {
+  public KeyFrame addKeyFrame(double timeInMillis) {
     var kf = generateKeyFrame(Duration.millis(timeInMillis));
 
     kf.copyFrom(keyFrames.getLast());
