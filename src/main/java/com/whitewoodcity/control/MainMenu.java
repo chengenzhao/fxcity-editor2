@@ -21,6 +21,7 @@ public class MainMenu extends MenuBar {
   public static final String JSON = "json";
   public static final String ITEMS = "items";
   public static final String KEY_FRAMES = "keyFrames";
+  public static final String INHERITANCE = "inheritance";
 
   public MainMenu() {
     menu.getItems().addAll(save, load, clear);
@@ -45,16 +46,30 @@ public class MainMenu extends MenuBar {
               var json = new JsonObject(jsonString);
               var items = json.getJsonArray(ITEMS);
               var frames = json.getJsonArray(KEY_FRAMES);
+              var inheritance = json.getJsonArray(INHERITANCE);
+              //build items
               for(var obj:items){
                 if(obj instanceof JsonObject object){
                   buildItem(object.getString(NAME),object.getJsonArray(JSON).toString());
                 }
               }
+              //build key frames
               frames.getJsonArray(0).stream().skip(1).filter(JsonObject.class::isInstance)
                 .map(JsonObject.class::cast).forEach(e -> {
                   var time = e.getNumber("time").doubleValue();
                   EditorApp.getEditorApp().bottomPane.buildKeyFrame(time);
                 });
+
+              //creat inheritance relation
+              for(int i=0;i<inheritance.size();i++){
+                var item = EditorApp.getEditorApp().leftColumn.getTreeItems().get(i);
+                var pi = inheritance.getNumber(i).intValue();
+                if(pi >= 0){
+                  var parent = EditorApp.getEditorApp().leftColumn.getTreeItems().get(pi);
+                  EditorApp.getEditorApp().bottomPane.setParent(item, parent);
+                }
+              }
+
               for(int i=0;i<frames.size();i++){
                 var kfs = frames.getJsonArray(i);
                 var item = EditorApp.getEditorApp().leftColumn.getTreeItems().get(i);
@@ -71,6 +86,7 @@ public class MainMenu extends MenuBar {
                 }
               }
 
+              //remove last keyframe which is only generated for recycling animation purpose
               EditorApp.getEditorApp().bottomPane.getChildren().stream().filter(Button.class::isInstance)
                 .map(Button.class::cast).filter(b-> b.getId()!=null && b.getId().startsWith(DELETE_BUTTON_PREFIX)).toList()
                 .getLast().fire();
@@ -97,11 +113,23 @@ public class MainMenu extends MenuBar {
         var json = new JsonObject();
         json.put(ITEMS,buildItemJson());
         json.put(KEY_FRAMES, EditorApp.getEditorApp().bottomPane.buildTransitionJson());
+        json.put(INHERITANCE, buildInheritanceJson());
         Files.write(Paths.get(file.getPath()), json.toString().getBytes());
       } catch (IOException e) {
         throw new RuntimeException(e);
       }
     });
+  }
+
+  JsonArray buildInheritanceJson() {
+    var indexes = EditorApp.getEditorApp().leftColumn.getTreeItems().stream().map(item -> {
+      var map = EditorApp.getEditorApp().bottomPane.keyFrames.getFirst().getRectBiMap();
+      var rect = map.get(item);
+      if(rect.parent()==null) return -1;
+      var parentItem = map.inverse().get(rect.parent());
+      return EditorApp.getEditorApp().leftColumn.getTreeItems().indexOf(parentItem);
+    }).toList();
+    return new JsonArray(indexes);
   }
 
   public void buildItem(String itemName, String jsonString) {
