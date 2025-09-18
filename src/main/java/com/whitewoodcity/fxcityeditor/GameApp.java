@@ -116,6 +116,15 @@ public class GameApp extends GameApplication {
       }
     });
 
+    var pivotX = rect.getRotation().getPivotX();
+    var pivotY = rect.getRotation().getPivotY();
+    if (pivotX < rect.getX()) pivotX = rect.getX();
+    if (pivotX > rect.getX() + rect.getWidth()) pivotX = rect.getX() + rect.getWidth();
+    if (pivotY < rect.getY()) pivotY = rect.getY();
+    if (pivotY > rect.getY() + rect.getHeight()) pivotY = rect.getY() + rect.getHeight();
+    rect.getRotation().setPivotX(pivotX);
+    rect.getRotation().setPivotY(pivotY);
+
     arrow.getOrigin().setOnMousePressed(oe -> {
       var op = oe;//rect.transform(new Point2D(oe.getX(), oe.getY()));
       var ox = op.getX();

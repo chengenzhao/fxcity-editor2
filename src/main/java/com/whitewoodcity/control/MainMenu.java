@@ -16,6 +16,8 @@ public class MainMenu extends MenuBar {
   MenuItem clear = new MenuItem("Clear");
 
   public static final String DELETE_BUTTON_PREFIX = "deleteButton";
+  public static final String NAME = "name";
+  public static final String JSON = "json";
 
   public MainMenu() {
     menu.getItems().addAll(save, load, clear);
@@ -24,18 +26,29 @@ public class MainMenu extends MenuBar {
     load.setOnAction(_ -> {
       var fileChooser = new FileChooser();
       fileChooser.setTitle("What file would you like to load?");
-      fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("svg files", "*.jvg"));
+      fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("jvg files", "*.jvg", "*.ajvg"));
       var window = this.getScene().getWindow();
       var file = fileChooser.showOpenDialog(window);
       if (file != null) {
         try {
-          var app = EditorApp.getEditorApp();
-          var jsonString = Files.readString(Paths.get(file.getPath()));
-          var item = app.leftColumn.addNode(file.getName());
-          app.bottomPane.keyFrames.forEach(f -> {
-            f.getRectBiMap().put(item, createRect(new JVG(jsonString).trim()));
-          });
-          FXGL.<GameApp>getAppCast().update();
+          switch (file.getName().substring(file.getName().indexOf(".") + 1)) {
+            case "jvg" -> {
+              var jsonString = Files.readString(Paths.get(file.getPath()));
+              buildItem(file.getName(), jsonString, true);
+            }
+            case "ajvg" -> {
+              clear();
+              var jsonString = Files.readString(Paths.get(file.getPath()));
+              var jsonArray = new JsonArray(jsonString);
+              for(var obj:jsonArray){
+                if(obj instanceof JsonObject object){
+                  buildItem(object.getString(NAME),object.getJsonArray(JSON).toString());
+                }
+              }
+            }
+            default -> {
+            }
+          }
         } catch (IOException e) {
           throw new RuntimeException(e);
         }
@@ -43,6 +56,59 @@ public class MainMenu extends MenuBar {
     });
 
     clear.setOnAction(_ -> clear());
+
+    save.setOnAction(_ -> {
+      var fileChooser = new FileChooser();
+      fileChooser.setTitle("What file would you like to save?");
+      fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("ajvg files", "*.ajvg"));
+      fileChooser.setInitialFileName("config");
+      var file = fileChooser.showSaveDialog(this.getScene().getWindow());
+      if (file == null) return;
+      try {
+        var json = buildNodeJson();
+        Files.write(Paths.get(file.getPath()), json.toString().getBytes());
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+    });
+  }
+
+  public void buildItem(String itemName, String jsonString) {
+    buildItem(itemName, jsonString, false);
+  }
+
+  public void buildItem(String itemName, String jsonString, boolean trim) {
+    var app = EditorApp.getEditorApp();
+    var item = app.leftColumn.addNode(itemName);
+    app.bottomPane.keyFrames.forEach(f -> {
+      var jvg = new JVG(jsonString);
+      if (trim) jvg.trim();
+      f.getRectBiMap().put(item, createRect(jvg));
+    });
+    FXGL.<GameApp>getAppCast().update();
+  }
+
+  JsonArray buildNodeJson() {
+    var arrayNode = new JsonArray();
+
+    for (var item : EditorApp.getEditorApp().leftColumn.getTreeItems()) {
+      var node = EditorApp.getEditorApp().bottomPane.keyFrames.getFirst().getRectBiMap().get(item).getNode();
+      switch (node) {
+        case JVG jvg -> {
+          var json = new JsonObject();
+          json.put(JSON,new JsonArray(jvg.toJsonString()));
+          json.put(NAME,EditorApp.getEditorApp().leftColumn.getText(item));
+          arrayNode.add(json);
+        }
+        case ImageView view -> {
+          //todo
+        }
+        default -> {
+        }
+      }
+    }
+
+    return arrayNode;
   }
 
   public void clear() {
@@ -54,7 +120,7 @@ public class MainMenu extends MenuBar {
       .filter(HBox.class::isInstance).map(HBox.class::cast)
       .flatMap(e -> e.getChildren().stream());
 
-    Stream.concat(stream0,stream1)
+    Stream.concat(stream0, stream1)
       .filter(Button.class::isInstance).map(Button.class::cast)
       .filter(b -> b.getId() != null & b.getId().startsWith(DELETE_BUTTON_PREFIX))
       .forEach(list::add);
