@@ -18,6 +18,7 @@ public class MainMenu extends MenuBar {
   public static final String DELETE_BUTTON_PREFIX = "deleteButton";
   public static final String NAME = "name";
   public static final String JSON = "json";
+  public static final String ITEMS = "items";
 
   public MainMenu() {
     menu.getItems().addAll(save, load, clear);
@@ -39,7 +40,8 @@ public class MainMenu extends MenuBar {
             case "ajvg" -> {
               clear();
               var jsonString = Files.readString(Paths.get(file.getPath()));
-              var jsonArray = new JsonArray(jsonString);
+              var json = new JsonObject(jsonString);
+              var jsonArray = json.getJsonArray(ITEMS);
               for(var obj:jsonArray){
                 if(obj instanceof JsonObject object){
                   buildItem(object.getString(NAME),object.getJsonArray(JSON).toString());
@@ -65,7 +67,8 @@ public class MainMenu extends MenuBar {
       var file = fileChooser.showSaveDialog(this.getScene().getWindow());
       if (file == null) return;
       try {
-        var json = buildNodeJson();
+        var json = new JsonObject();
+        json.put(ITEMS,buildItemJson());
         Files.write(Paths.get(file.getPath()), json.toString().getBytes());
       } catch (IOException e) {
         throw new RuntimeException(e);
@@ -88,7 +91,7 @@ public class MainMenu extends MenuBar {
     FXGL.<GameApp>getAppCast().update();
   }
 
-  JsonArray buildNodeJson() {
+  JsonArray buildItemJson() {
     var arrayNode = new JsonArray();
 
     for (var item : EditorApp.getEditorApp().leftColumn.getTreeItems()) {
