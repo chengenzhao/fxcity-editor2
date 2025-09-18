@@ -6,6 +6,7 @@ import module javafx.controls;
 import com.almasb.fxgl.dsl.FXGL;
 import com.whitewoodcity.fxcityeditor.EditorApp;
 import com.whitewoodcity.fxcityeditor.GameApp;
+import com.whitewoodcity.fxgl.transition.RotateJsonKeys;
 import com.whitewoodcity.fxgl.vectorview.JVG;
 import com.whitewoodcity.node.EditableRectangle;
 
@@ -54,7 +55,26 @@ public class MainMenu extends MenuBar {
                   var time = e.getNumber("time").doubleValue();
                   EditorApp.getEditorApp().bottomPane.buildKeyFrame(time);
                 });
+              for(int i=0;i<frames.size();i++){
+                var kfs = frames.getJsonArray(i);
+                var item = EditorApp.getEditorApp().leftColumn.getTreeItems().get(i);
+                for(int j=0;j<kfs.size();j++){
+                  var frame = EditorApp.getEditorApp().bottomPane.keyFrames.get(j);
+                  var rect = frame.getRectBiMap().get(item);
+                  var jsonObject = kfs.getJsonObject(j);
+                  rect.setX(jsonObject.getNumber(RotateJsonKeys.X.key()).doubleValue());
+                  rect.setY(jsonObject.getNumber(RotateJsonKeys.Y.key()).doubleValue());
+                  var r = jsonObject.getJsonArray(RotateJsonKeys.ROTATES.key()).getJsonObject(0);
+                  rect.getRotation().setPivotX(r.getNumber(RotateJsonKeys.PIVOT_X.key()).doubleValue());
+                  rect.getRotation().setPivotY(r.getNumber(RotateJsonKeys.PIVOT_Y.key()).doubleValue());
+                  rect.getRotation().setAngle(r.getNumber(RotateJsonKeys.ANGLE.key()).intValue());
+                  rect.update();
+                }
+              }
 
+              EditorApp.getEditorApp().bottomPane.getChildren().stream().filter(Button.class::isInstance)
+                .map(Button.class::cast).filter(b-> b.getId()!=null && b.getId().startsWith(DELETE_BUTTON_PREFIX)).toList()
+                .getLast().fire();
             }
             default -> {
             }
