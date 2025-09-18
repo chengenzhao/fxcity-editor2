@@ -61,10 +61,10 @@ public class MainMenu extends MenuBar {
                 for(int j=0;j<kfs.size();j++){
                   var frame = EditorApp.getEditorApp().bottomPane.keyFrames.get(j);
                   var rect = frame.getRectBiMap().get(item);
-                  var jsonObject = kfs.getJsonObject(j);
-                  rect.setX(jsonObject.getNumber(RotateJsonKeys.X.key()).doubleValue());
-                  rect.setY(jsonObject.getNumber(RotateJsonKeys.Y.key()).doubleValue());
-                  var r = jsonObject.getJsonArray(RotateJsonKeys.ROTATES.key()).getJsonObject(0);
+                  var dataJson = kfs.getJsonObject(j);
+                  rect.setX(dataJson.getNumber(RotateJsonKeys.X.key()).doubleValue());
+                  rect.setY(dataJson.getNumber(RotateJsonKeys.Y.key()).doubleValue());
+                  var r = dataJson.getJsonArray(RotateJsonKeys.ROTATES.key()).getJsonObject(0);
                   rect.getRotation().setPivotX(r.getNumber(RotateJsonKeys.PIVOT_X.key()).doubleValue());
                   rect.getRotation().setPivotY(r.getNumber(RotateJsonKeys.PIVOT_Y.key()).doubleValue());
                   rect.getRotation().setAngle(r.getNumber(RotateJsonKeys.ANGLE.key()).intValue());
