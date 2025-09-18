@@ -13,6 +13,8 @@ import javafx.scene.control.TreeView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
+import static com.whitewoodcity.control.MainMenu.DELETE_BUTTON_PREFIX;
+
 public class LeftColumn extends VBox {
 
   private final TreeView<Node> treeView = new TreeView<>();
@@ -46,7 +48,7 @@ public class LeftColumn extends VBox {
   public TreeItem<Node> addNode(String name) {
     var root = treeView.getRoot();
     var item = generateNodeItem(name, root);
-    item.getValue().setOnMousePressed(_->{
+    item.getValue().setOnMousePressed(_ -> {
       var map = EditorApp.getEditorApp().bottomPane.currentFrame.getRectBiMap();
       FXGL.<GameApp>getAppCast().selectRect(map.get(item));
     });
@@ -90,6 +92,7 @@ public class LeftColumn extends VBox {
 
       FXGL.<GameApp>getAppCast().update();
     });
+    del.setId(DELETE_BUTTON_PREFIX + Math.random());
 
     up.setOnAction(_ -> {
       var i = root.getChildren().indexOf(treeItem);

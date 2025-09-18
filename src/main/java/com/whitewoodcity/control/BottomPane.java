@@ -18,6 +18,8 @@ import io.vertx.core.json.JsonObject;
 import javafx.scene.control.Label;
 import javafx.util.Duration;
 
+import static com.whitewoodcity.control.MainMenu.DELETE_BUTTON_PREFIX;
+
 public class BottomPane extends Pane {
   public final List<KeyFrame> keyFrames = new ArrayList<>();
   public KeyFrame currentFrame;
@@ -83,12 +85,12 @@ public class BottomPane extends Pane {
     });
 
     objectButton.setOnAction(_ -> showFrameData());
-    arrayButton.setOnAction(_-> showTransitData());
+    arrayButton.setOnAction(_ -> showTransitData());
 
     playButton.setOnAction(_ -> playTransition());
     loopButton.setOnAction(_ -> playTransition(Timeline.INDEFINITE));
 
-    stopButton.setOnAction(_->select(currentFrame));
+    stopButton.setOnAction(_ -> select(currentFrame));
   }
 
   private void playTransition() {
@@ -166,6 +168,7 @@ public class BottomPane extends Pane {
       getChildren().removeAll(kf, timeField, delButton);
       select(keyFrames.getLast());
     });
+    delButton.setId(DELETE_BUTTON_PREFIX + Math.random());
     return delButton;
   }
 
@@ -359,7 +362,7 @@ public class BottomPane extends Pane {
       var s = new Separator();
       s.setPrefWidth(500);
       s.setOrientation(Orientation.HORIZONTAL);
-      if(!vbox.getChildren().isEmpty())
+      if (!vbox.getChildren().isEmpty())
         vbox.getChildren().add(s);
 
       vbox.getChildren().addAll(new Label(EditorApp.getEditorApp().leftColumn.getText(item)), hbox, textArea);

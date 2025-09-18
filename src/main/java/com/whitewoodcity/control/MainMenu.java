@@ -1,8 +1,8 @@
 package com.whitewoodcity.control;
 
+import module io.vertx.core;
 import module java.base;
 import module javafx.controls;
-import module io.vertx.core;
 import com.almasb.fxgl.dsl.FXGL;
 import com.whitewoodcity.fxcityeditor.EditorApp;
 import com.whitewoodcity.fxcityeditor.GameApp;
@@ -13,9 +13,12 @@ public class MainMenu extends MenuBar {
   Menu menu = new Menu("File");
   MenuItem save = new MenuItem("Save");
   MenuItem load = new MenuItem("Load");
+  MenuItem clear = new MenuItem("Clear");
+
+  public static final String DELETE_BUTTON_PREFIX = "deleteButton";
 
   public MainMenu() {
-    menu.getItems().addAll(save, load);
+    menu.getItems().addAll(save, load, clear);
     getMenus().add(menu);
 
     load.setOnAction(_ -> {
@@ -30,7 +33,7 @@ public class MainMenu extends MenuBar {
           var jsonString = Files.readString(Paths.get(file.getPath()));
           var item = app.leftColumn.addNode(file.getName());
           app.bottomPane.keyFrames.forEach(f -> {
-            f.getRectBiMap().put(item,createRect(new JVG(jsonString).trim()));
+            f.getRectBiMap().put(item, createRect(new JVG(jsonString).trim()));
           });
           FXGL.<GameApp>getAppCast().update();
         } catch (IOException e) {
@@ -38,10 +41,28 @@ public class MainMenu extends MenuBar {
         }
       }
     });
+
+    clear.setOnAction(_ -> clear());
   }
 
+  public void clear() {
+    var editor = EditorApp.getEditorApp();
+    var list = new ArrayList<Button>();
 
-  public EditableRectangle createRect(Node node){
+    var stream0 = editor.bottomPane.getChildren().stream();
+    var stream1 = editor.leftColumn.getTreeItems().stream().map(TreeItem::getValue)
+      .filter(HBox.class::isInstance).map(HBox.class::cast)
+      .flatMap(e -> e.getChildren().stream());
+
+    Stream.concat(stream0,stream1)
+      .filter(Button.class::isInstance).map(Button.class::cast)
+      .filter(b -> b.getId() != null & b.getId().startsWith(DELETE_BUTTON_PREFIX))
+      .forEach(list::add);
+
+    list.forEach(Button::fire);
+  }
+
+  public EditableRectangle createRect(Node node) {
     var rect = new EditableRectangle(node);
 
     switch (node) {
@@ -54,7 +75,7 @@ public class MainMenu extends MenuBar {
         rect.setX(xy.getX());
         rect.setY(xy.getY());
       }
-      case ImageView imageView-> {
+      case ImageView imageView -> {
         rect.setWidth(imageView.getFitWidth());
         rect.setHeight(imageView.getFitHeight());
         rect.setX(imageView.getX());
@@ -65,5 +86,7 @@ public class MainMenu extends MenuBar {
     }
 
     return rect;
-  };
+  }
+
+  ;
 }
