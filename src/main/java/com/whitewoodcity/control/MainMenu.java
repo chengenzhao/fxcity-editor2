@@ -35,12 +35,12 @@ public class MainMenu extends MenuBar {
       var file = fileChooser.showOpenDialog(window);
       if (file != null) {
         try {
-          switch (file.getName().substring(file.getName().indexOf(".") + 1)) {
-            case "jvg" -> {
+          switch (file.getName()) {
+            case String s when s.endsWith("jvg") -> {
               var jsonString = Files.readString(Paths.get(file.getPath()));
               buildItem(file.getName(), jsonString, true);
             }
-            case "ajvg" -> {
+            case String s when s.endsWith("ajvg") -> {
               clear();
               var jsonString = Files.readString(Paths.get(file.getPath()));
               var json = new JsonObject(jsonString);
