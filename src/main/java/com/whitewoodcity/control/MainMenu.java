@@ -36,11 +36,7 @@ public class MainMenu extends MenuBar {
       if (file != null) {
         try {
           switch (file.getName()) {
-            case String s when s.endsWith("jvg") -> {
-              var jsonString = Files.readString(Paths.get(file.getPath()));
-              buildItem(file.getName(), jsonString, true);
-            }
-            case String s when s.endsWith("ajvg") -> {
+            case String s when s.endsWith(".ajvg") -> {
               clear();
               var jsonString = Files.readString(Paths.get(file.getPath()));
               var json = new JsonObject(jsonString);
@@ -90,6 +86,10 @@ public class MainMenu extends MenuBar {
               EditorApp.getEditorApp().bottomPane.getChildren().stream().filter(Button.class::isInstance)
                 .map(Button.class::cast).filter(b-> b.getId()!=null && b.getId().startsWith(DELETE_BUTTON_PREFIX)).toList()
                 .getLast().fire();
+            }
+            case String s when s.endsWith(".jvg") -> {
+              var jsonString = Files.readString(Paths.get(file.getPath()));
+              buildItem(file.getName(), jsonString, true);
             }
             default -> {
             }
