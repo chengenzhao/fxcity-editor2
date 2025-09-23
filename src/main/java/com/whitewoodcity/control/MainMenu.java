@@ -90,6 +90,7 @@ public class MainMenu extends MenuBar {
             case String s when s.endsWith(".jvg") -> {
               var jsonString = Files.readString(Paths.get(file.getPath()));
               buildItem(file.getName(), jsonString, true);
+
             }
             default -> {
             }
