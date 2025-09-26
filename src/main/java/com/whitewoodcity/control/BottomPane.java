@@ -110,6 +110,9 @@ public class BottomPane extends Pane {
       var rect = keyFrames.getFirst().getRectBiMap().get(item).cloneWithTransforms();
       rect.update();
       var node = rect.getNode();
+      if(node instanceof JVG jvg){
+        node = jvg.toImageView();
+      }
       var json = jsonArray.getJsonArray(i);
       app.entity.getViewComponent().addChild(node);
       var rotates = new Rotates(node);
