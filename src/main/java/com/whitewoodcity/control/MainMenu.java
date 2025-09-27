@@ -89,13 +89,12 @@ public class MainMenu extends MenuBar {
             }
             case String s when s.toLowerCase().endsWith(".jvg") -> {
               var jsonString = Files.readString(Paths.get(file.getPath()));
-              buildItem(file.getName(), jsonString, true);
+              buildItem(file.getName(), jsonString);
 
             }
             case String s when s.toLowerCase().endsWith(".png")||s.toLowerCase().endsWith(".jpg")||s.toLowerCase().endsWith(".gif") -> {
               var image = new Image(file.toURI().toString());
-              var view = new ImageView(image);
-              buildItem(file.getName(), view);
+              buildItem(file.getName(), image);
             }
             default -> {
             }
@@ -138,20 +137,18 @@ public class MainMenu extends MenuBar {
     return new JsonArray(indexes);
   }
 
-  public void buildItem(String itemName, String jsonString) {
-    buildItem(itemName, jsonString, false);
-  }
-
-  public void buildItem(String itemName, String jsonString, boolean trim) {
-    var jvg = new JVG(jsonString);
-    if (trim) jvg.trim();
-    buildItem(itemName, jvg);
-  }
-
-  private void buildItem(String itemName, Node node){
+  private void buildItem(String itemName, Object material){
     var app = EditorApp.getEditorApp();
     var item = app.leftColumn.addNode(itemName);
-    app.bottomPane.keyFrames.forEach(f -> f.getRectBiMap().put(item, createRect(node)));
+    app.bottomPane.keyFrames.forEach(f -> {
+      var node = switch (material){
+        case Image image -> new ImageView(image);
+        case String json -> new JVG(json).trim();
+        default -> null;
+      };
+      if(node!=null)
+        f.getRectBiMap().put(item, createRect(node));
+    });
     FXGL.<GameApp>getAppCast().update();
   }
 
@@ -209,8 +206,10 @@ public class MainMenu extends MenuBar {
         rect.setY(xy.getY());
       }
       case ImageView imageView -> {
-        rect.setWidth(imageView.getImage().getWidth());
-        rect.setHeight(imageView.getImage().getHeight());
+        imageView.setFitWidth(imageView.getImage().getWidth());
+        imageView.setFitHeight(imageView.getImage().getHeight());
+        rect.setWidth(imageView.getFitWidth());
+        rect.setHeight(imageView.getFitHeight());
         rect.setX(imageView.getX());
         rect.setY(imageView.getY());
       }
