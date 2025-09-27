@@ -143,14 +143,6 @@ public class MainMenu extends MenuBar {
   }
 
   public void buildItem(String itemName, String jsonString, boolean trim) {
-//    var app = EditorApp.getEditorApp();
-//    var item = app.leftColumn.addNode(itemName);
-//    app.bottomPane.keyFrames.forEach(f -> {
-//      var jvg = new JVG(jsonString);
-//      if (trim) jvg.trim();
-//      f.getRectBiMap().put(item, createRect(jvg));
-//    });
-//    FXGL.<GameApp>getAppCast().update();
     var jvg = new JVG(jsonString);
     if (trim) jvg.trim();
     buildItem(itemName, jvg);
@@ -217,8 +209,8 @@ public class MainMenu extends MenuBar {
         rect.setY(xy.getY());
       }
       case ImageView imageView -> {
-        rect.setWidth(imageView.getFitWidth());
-        rect.setHeight(imageView.getFitHeight());
+        rect.setWidth(imageView.getImage().getWidth());
+        rect.setHeight(imageView.getImage().getHeight());
         rect.setX(imageView.getX());
         rect.setY(imageView.getY());
       }
