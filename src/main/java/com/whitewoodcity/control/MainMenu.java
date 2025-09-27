@@ -30,13 +30,13 @@ public class MainMenu extends MenuBar {
     load.setOnAction(_ -> {
       var fileChooser = new FileChooser();
       fileChooser.setTitle("What file would you like to load?");
-      fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("jvg files", "*.jvg", "*.ajvg"));
+      fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("jvg & bitmap files", "*.jvg", "*.ajvg", "*.png", "*.jpg","*.gif"));
       var window = this.getScene().getWindow();
       var file = fileChooser.showOpenDialog(window);
       if (file != null) {
         try {
           switch (file.getName()) {
-            case String s when s.endsWith(".ajvg") -> {
+            case String s when s.toLowerCase().endsWith(".ajvg") -> {
               clear();
               var jsonString = Files.readString(Paths.get(file.getPath()));
               var json = new JsonObject(jsonString);
@@ -87,10 +87,15 @@ public class MainMenu extends MenuBar {
                 .map(Button.class::cast).filter(b-> b.getId()!=null && b.getId().startsWith(DELETE_BUTTON_PREFIX)).toList()
                 .getLast().fire();
             }
-            case String s when s.endsWith(".jvg") -> {
+            case String s when s.toLowerCase().endsWith(".jvg") -> {
               var jsonString = Files.readString(Paths.get(file.getPath()));
               buildItem(file.getName(), jsonString, true);
 
+            }
+            case String s when s.toLowerCase().endsWith(".png")||s.toLowerCase().endsWith(".jpg")||s.toLowerCase().endsWith(".gif") -> {
+              var image = new Image(file.toURI().toString());
+              var view = new ImageView(image);
+              buildItem(file.getName(), view);
             }
             default -> {
             }
@@ -138,13 +143,23 @@ public class MainMenu extends MenuBar {
   }
 
   public void buildItem(String itemName, String jsonString, boolean trim) {
+//    var app = EditorApp.getEditorApp();
+//    var item = app.leftColumn.addNode(itemName);
+//    app.bottomPane.keyFrames.forEach(f -> {
+//      var jvg = new JVG(jsonString);
+//      if (trim) jvg.trim();
+//      f.getRectBiMap().put(item, createRect(jvg));
+//    });
+//    FXGL.<GameApp>getAppCast().update();
+    var jvg = new JVG(jsonString);
+    if (trim) jvg.trim();
+    buildItem(itemName, jvg);
+  }
+
+  private void buildItem(String itemName, Node node){
     var app = EditorApp.getEditorApp();
     var item = app.leftColumn.addNode(itemName);
-    app.bottomPane.keyFrames.forEach(f -> {
-      var jvg = new JVG(jsonString);
-      if (trim) jvg.trim();
-      f.getRectBiMap().put(item, createRect(jvg));
-    });
+    app.bottomPane.keyFrames.forEach(f -> f.getRectBiMap().put(item, createRect(node)));
     FXGL.<GameApp>getAppCast().update();
   }
 

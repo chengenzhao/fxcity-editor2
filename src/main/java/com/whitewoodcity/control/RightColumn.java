@@ -200,6 +200,10 @@ public class RightColumn extends GridPane {
         }
         default -> {}
       }
+      var r = rect.getRotation();
+      r.setPivotX(r.getPivotX() * f);
+      r.setPivotY(r.getPivotY() * f);
+      rect.update();
     }
 
   }
