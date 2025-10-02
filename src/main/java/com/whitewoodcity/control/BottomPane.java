@@ -34,11 +34,10 @@ public class BottomPane extends Pane {
     keyFrames.add(new KeyFrame(20, 50).setTime(new Duration(0)).setColor(Color.ORANGE));
     currentFrame = keyFrames.getFirst();
 
-//    keyFrames.forEach(e -> this.getChildren().add(e));
-
     var hbox = new HBox(20);
     hbox.setAlignment(Pos.TOP_RIGHT);
     hbox.setPadding(new Insets(20));
+    var jvgButton = new Button("JVG data");
     var objectButton = new Button("{ Frame Data }");
     var arrayButton = new Button("[ Transit Data ]");
     var loopButton = new Button("↻");
@@ -48,7 +47,7 @@ public class BottomPane extends Pane {
     var addButton = new Button("+");
 
     hbox.layoutXProperty().bind(this.widthProperty().subtract(hbox.widthProperty()));
-    hbox.getChildren().addAll(loopButton, playButton, pauseButton, stopButton, new Label("Total Time: "), totalTime, addButton, objectButton, arrayButton);
+    hbox.getChildren().addAll(loopButton, playButton, pauseButton, stopButton, new Label("Total Time: "), totalTime, addButton, jvgButton, objectButton, arrayButton);
 
     line = new Line();
     line.setStroke(Color.DARKCYAN);
@@ -76,6 +75,7 @@ public class BottomPane extends Pane {
 
     addButton.setOnAction(_ -> buildKeyFrame(totalTime.getDouble() * 1000));
 
+    jvgButton.setOnAction(_ -> showJVGData());
     objectButton.setOnAction(_ -> showFrameData());
     arrayButton.setOnAction(_ -> showTransitData());
 
@@ -276,6 +276,39 @@ public class BottomPane extends Pane {
     return json;
   }
 
+  private void showJVGData() {
+    ButtonType okButtonType = ButtonType.OK;
+    Dialog<ButtonType> dialog = new Dialog<>();
+
+    var vbox = new VBox();
+//    var kf = currentFrame;
+    var map = currentFrame.getRectBiMap();
+    vbox.setSpacing(5);
+
+    for (var item : EditorApp.getEditorApp().leftColumn.getTreeItems()) {
+      var rect = map.get(item);
+      if(rect.getNode() instanceof JVG jvg){
+        var textArea = new TextArea(jvg.toJsonString());
+        textArea.setWrapText(true);
+        textArea.setEditable(false);
+        textArea.setPrefHeight(100);
+        var s = new Separator();
+        s.setPrefWidth(500);
+        s.setOrientation(Orientation.HORIZONTAL);
+        if (!vbox.getChildren().isEmpty())
+          vbox.getChildren().add(s);
+        vbox.getChildren().addAll(new Label(EditorApp.getEditorApp().leftColumn.getText(item)),textArea);
+      }
+    }
+
+    var scrollpane = new ScrollPane(vbox);
+    dialog.getDialogPane().setContent(scrollpane);
+    dialog.getDialogPane().getButtonTypes().add(okButtonType);
+    dialog.getDialogPane().lookupButton(okButtonType);
+
+    dialog.showAndWait();
+  }
+
   private void showFrameData() {
     ButtonType okButtonType = ButtonType.OK;
     Dialog<ButtonType> dialog = new Dialog<>();
@@ -302,7 +335,8 @@ public class BottomPane extends Pane {
       s.setOrientation(Orientation.HORIZONTAL);
       if (!vbox.getChildren().isEmpty())
         vbox.getChildren().add(s);
-      vbox.getChildren().addAll(new Label(EditorApp.getEditorApp().leftColumn.getText(item)), hbox, textArea);
+      vbox.getChildren().addAll(new Label(EditorApp.getEditorApp().leftColumn.getText(item)), hbox,
+        new Label("Instant rotation data: "),textArea);
     }
 
     var scrollpane = new ScrollPane(vbox);
