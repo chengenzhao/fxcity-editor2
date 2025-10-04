@@ -1,18 +1,12 @@
 package com.whitewoodcity.control;
 
+import module javafx.controls;
 import com.almasb.fxgl.dsl.FXGL;
 import com.whitewoodcity.fxcityeditor.EditorApp;
 import com.whitewoodcity.fxcityeditor.GameApp;
 import com.whitewoodcity.fxgl.vectorview.JVG;
 import com.whitewoodcity.node.EditableRectangle;
 import com.whitewoodcity.node.NumberField;
-import javafx.collections.ObservableList;
-import javafx.geometry.Insets;
-import javafx.scene.Node;
-import javafx.scene.control.*;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.util.StringConverter;
 
 public class RightColumn extends GridPane {
@@ -23,7 +17,7 @@ public class RightColumn extends GridPane {
   CheckBox visible = new CheckBox();
   Button multiple = new Button("*");
   Button divsion = new Button("/");
-  NumberField factor = new NumberField(1,100);
+  NumberField factor = new NumberField(1, 100);
 
   private final int unchangedRows = 3;
 
@@ -35,8 +29,8 @@ public class RightColumn extends GridPane {
     this.add(choiceBox, 1, 0);
     this.add(new Label("Visible:"), 0, 1);
     this.add(visible, 1, 1);
-    this.add(new HBox(multiple, divsion),0,2);
-    this.add(factor, 1,2);
+    this.add(new HBox(multiple, divsion), 0, 2);
+    this.add(factor, 1, 2);
 
     factor.setText("1.1");
     factor.setPrefWidth(100);
@@ -49,10 +43,11 @@ public class RightColumn extends GridPane {
     choiceBox.setValue(null);
 
     if (rect != null) {
+      rect.mouseTransparentProperty().unbind();
       visible.selectedProperty().unbindBidirectional(rect.getNode().visibleProperty());
     }
 
-    this.getChildren().remove(unchangedRows*2, this.getChildren().size());
+    this.getChildren().remove(unchangedRows * 2, this.getChildren().size());
 
     multiple.setOnAction(null);
     divsion.setOnAction(null);
@@ -108,9 +103,10 @@ public class RightColumn extends GridPane {
     });
 
     visible.selectedProperty().bindBidirectional(rect.getNode().visibleProperty());
+    rect.mouseTransparentProperty().bind(visible.selectedProperty().map(s -> !s));
 
-    multiple.setOnAction(_->multiply(factor.getDouble()));
-    divsion.setOnAction(_->multiply(1.0/factor.getDouble()));
+    multiple.setOnAction(_ -> multiply(factor.getDouble()));
+    divsion.setOnAction(_ -> multiply(1.0 / factor.getDouble()));
 
     this.add(new Label("PivotX:"), 0, unchangedRows);
     var pivotX = new NumberField(Integer.MIN_VALUE, Integer.MAX_VALUE);
@@ -179,30 +175,31 @@ public class RightColumn extends GridPane {
     items.remove(item);
   }
 
-  private void multiply(double f){
+  private void multiply(double f) {
     var item = EditorApp.getEditorApp().bottomPane.currentFrame.getRectBiMap().inverse().get(rect);
-    for(var kf:EditorApp.getEditorApp().bottomPane.keyFrames){
+    for (var kf : EditorApp.getEditorApp().bottomPane.keyFrames) {
       var rect = kf.getRectBiMap().get(item);
       var node = rect.getNode();
-      switch (node){
-        case JVG jvg ->{
+      switch (node) {
+        case JVG jvg -> {
           var xy = jvg.getXY();
           jvg.trim().zoom(f).move(xy);
           var d = jvg.getDimension();
           rect.setWidth(d.getWidth());
           rect.setHeight(d.getHeight());
         }
-        case ImageView imageView ->{
+        case ImageView imageView -> {
           imageView.setFitWidth(imageView.getFitWidth() * f);
           imageView.setFitHeight(imageView.getFitHeight() * f);
           rect.setWidth(imageView.getFitWidth());
           rect.setHeight(imageView.getFitHeight());
         }
-        default -> {}
+        default -> {
+        }
       }
       var r = rect.getRotation();
-      r.setPivotX((r.getPivotX()-rect.getX()) * f + rect.getX());
-      r.setPivotY((r.getPivotY()-rect.getY()) * f + rect.getY());
+      r.setPivotX((r.getPivotX() - rect.getX()) * f + rect.getX());
+      r.setPivotY((r.getPivotY() - rect.getY()) * f + rect.getY());
       rect.update();
     }
 
