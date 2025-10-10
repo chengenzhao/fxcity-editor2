@@ -18,8 +18,10 @@ public class RightColumn extends GridPane {
   Button multiple = new Button("*");
   Button divsion = new Button("/");
   NumberField factor = new NumberField(1, 100);
+  NumberField xField = new NumberField(-(int) Screen.getPrimary().getBounds().getWidth(), (int) Screen.getPrimary().getBounds().getWidth());
+  NumberField yField = new NumberField(-(int) Screen.getPrimary().getBounds().getHeight(), (int) Screen.getPrimary().getBounds().getHeight());
 
-  private final int unchangedRows = 3;
+  private final int unchangedRows = 5;
 
   public RightColumn() {
     this.setPadding(new Insets(10));
@@ -31,6 +33,10 @@ public class RightColumn extends GridPane {
     this.add(visible, 1, 1);
     this.add(new HBox(multiple, divsion), 0, 2);
     this.add(factor, 1, 2);
+    this.add(new Label("X:"), 0, 3);
+    this.add(xField, 1, 3);
+    this.add(new Label("Y:"), 0, 4);
+    this.add(yField, 1, 4);
 
     factor.setText("1.1");
     factor.setPrefWidth(100);
@@ -45,6 +51,8 @@ public class RightColumn extends GridPane {
     if (rect != null) {
       rect.mouseTransparentProperty().unbind();
       visible.selectedProperty().unbindBidirectional(rect.getNode().visibleProperty());
+      xField.valueProperty().unbindBidirectional(rect.xProperty());
+      yField.valueProperty().unbindBidirectional(rect.yProperty());
     }
 
     this.getChildren().remove(unchangedRows * 2, this.getChildren().size());
@@ -104,6 +112,23 @@ public class RightColumn extends GridPane {
 
     visible.selectedProperty().bindBidirectional(rect.getNode().visibleProperty());
     rect.mouseTransparentProperty().bind(visible.selectedProperty().map(s -> !s));
+    xField.valueProperty().bindBidirectional(rect.xProperty());
+    yField.valueProperty().bindBidirectional(rect.yProperty());
+
+    xField.valueProperty().addListener((_, _, newV) -> {
+      var r = rect.getRotation();
+      var v = newV.doubleValue();
+      if (r.getPivotX() > v + rect.getWidth()) r.setPivotX(v + rect.getWidth());
+      if (r.getPivotX() < v) r.setPivotX(v);
+      rect.update();
+    });
+    yField.valueProperty().addListener((_, _, newV) -> {
+      var r = rect.getRotation();
+      var v = newV.doubleValue();
+      if (r.getPivotY() > v + rect.getHeight()) r.setPivotY(v + rect.getHeight());
+      if (r.getPivotY() < v) r.setPivotY(v);
+      rect.update();
+    });
 
     multiple.setOnAction(_ -> multiply(factor.getDouble()));
     divsion.setOnAction(_ -> multiply(1.0 / factor.getDouble()));
@@ -115,6 +140,7 @@ public class RightColumn extends GridPane {
     pivotX.valueProperty().addListener((_, _, newV) -> {
       if (newV.doubleValue() > rect.getX() + rect.getWidth()) pivotX.valueProperty().set(rect.getX() + rect.getWidth());
       if (newV.doubleValue() < rect.getX()) pivotX.valueProperty().set(rect.getX());
+      rect.update();
     });
     this.add(pivotX, 1, unchangedRows);
 
@@ -126,6 +152,7 @@ public class RightColumn extends GridPane {
       if (newV.doubleValue() > rect.getY() + rect.getHeight())
         pivotY.valueProperty().set(rect.getY() + rect.getHeight());
       if (newV.doubleValue() < rect.getY()) pivotY.valueProperty().set(rect.getY());
+      rect.update();
     });
     this.add(pivotY, 1, unchangedRows + 1);
 

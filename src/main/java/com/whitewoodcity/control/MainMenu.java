@@ -91,7 +91,6 @@ public class MainMenu extends MenuBar {
             case String s when s.toLowerCase().endsWith(".jvg") -> {
               var jsonString = Files.readString(Paths.get(file.getPath()));
               buildItem(file.getName(), jsonString);
-
             }
             case String s when s.toLowerCase().endsWith(".png")||s.toLowerCase().endsWith(".jpg")||s.toLowerCase().endsWith(".gif") -> {
               var image = new Image(file.toURI().toString());
