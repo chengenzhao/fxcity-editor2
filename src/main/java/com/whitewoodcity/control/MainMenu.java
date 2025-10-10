@@ -15,6 +15,7 @@ public class MainMenu extends MenuBar {
   MenuItem save = new MenuItem("Save");
   MenuItem load = new MenuItem("Load");
   MenuItem clear = new MenuItem("Clear");
+  MenuItem clearBitmap = new MenuItem("Clear bitmaps ");
 
   public static final String DELETE_BUTTON_PREFIX = "deleteButton";
   public static final String NAME = "name";
@@ -24,7 +25,7 @@ public class MainMenu extends MenuBar {
   public static final String INHERITANCE = "inheritance";
 
   public MainMenu() {
-    menu.getItems().addAll(save, load, clear);
+    menu.getItems().addAll(save, load, clear, clearBitmap);
     getMenus().add(menu);
 
     load.setOnAction(_ -> {
@@ -106,8 +107,10 @@ public class MainMenu extends MenuBar {
     });
 
     clear.setOnAction(_ -> clear());
+    clearBitmap.setOnAction(_ -> clearBitmap());
 
     save.setOnAction(_ -> {
+      clearBitmap();
       var fileChooser = new FileChooser();
       fileChooser.setTitle("What file would you like to save?");
       fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("ajvg files", "*.ajvg"));
@@ -189,6 +192,18 @@ public class MainMenu extends MenuBar {
       .filter(b -> b.getId() != null & b.getId().startsWith(DELETE_BUTTON_PREFIX))
       .forEach(list::add);
 
+    list.forEach(Button::fire);
+  }
+
+  public void clearBitmap() {
+    var editor = EditorApp.getEditorApp();
+    var list = new ArrayList<Button>();
+    editor.leftColumn.getTreeItems().stream().filter(item -> editor.bottomPane.keyFrames.getFirst().getRectBiMap().get(item).getNode() instanceof ImageView)
+      .map(TreeItem::getValue)
+      .filter(HBox.class::isInstance).map(HBox.class::cast)
+      .flatMap(e -> e.getChildren().stream()).filter(Button.class::isInstance).map(Button.class::cast)
+      .filter(b -> b.getId() != null & b.getId().startsWith(DELETE_BUTTON_PREFIX))
+      .forEach(list::add);
     list.forEach(Button::fire);
   }
 
