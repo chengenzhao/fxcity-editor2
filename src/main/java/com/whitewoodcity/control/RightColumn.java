@@ -18,10 +18,12 @@ public class RightColumn extends GridPane {
   Button multiple = new Button("*");
   Button divsion = new Button("/");
   NumberField factor = new NumberField(1, 100);
+  NumberField entityX = new NumberField(-(int) Screen.getPrimary().getBounds().getWidth(), (int) Screen.getPrimary().getBounds().getWidth());
+  NumberField entityY = new NumberField(-(int) Screen.getPrimary().getBounds().getHeight(), (int) Screen.getPrimary().getBounds().getHeight());
   NumberField xField = new NumberField(-(int) Screen.getPrimary().getBounds().getWidth(), (int) Screen.getPrimary().getBounds().getWidth());
   NumberField yField = new NumberField(-(int) Screen.getPrimary().getBounds().getHeight(), (int) Screen.getPrimary().getBounds().getHeight());
 
-  private final int unchangedRows = 5;
+  private final int unchangedRows = 7;
 
   public RightColumn() {
     this.setPadding(new Insets(10));
@@ -33,13 +35,22 @@ public class RightColumn extends GridPane {
     this.add(visible, 1, 1);
     this.add(new HBox(multiple, divsion), 0, 2);
     this.add(factor, 1, 2);
-    this.add(new Label("X:"), 0, 3);
-    this.add(xField, 1, 3);
-    this.add(new Label("Y:"), 0, 4);
-    this.add(yField, 1, 4);
+    this.add(new Label("Entity X:"), 0, 3);
+    this.add(entityX, 1, 3);
+    this.add(new Label("Entity Y:"), 0, 4);
+    this.add(entityY, 1, 4);
+    this.add(new Label("X:"), 0, 5);
+    this.add(xField, 1, 5);
+    this.add(new Label("Y:"), 0, 6);
+    this.add(yField, 1, 6);
 
     factor.setText("1.1");
     factor.setPrefWidth(100);
+
+    entityY.disableProperty().bind(entityX.disableProperty());
+    xField.disableProperty().bind(entityX.disableProperty());
+    yField.disableProperty().bind(entityX.disableProperty());
+    entityX.setDisable(true);
   }
 
   public void unbind() {
@@ -59,6 +70,9 @@ public class RightColumn extends GridPane {
 
     multiple.setOnAction(null);
     divsion.setOnAction(null);
+
+    entityX.valueProperty().unbindBidirectional(FXGL.<GameApp>getAppCast().entity.xProperty());
+    entityY.valueProperty().unbindBidirectional(FXGL.<GameApp>getAppCast().entity.yProperty());
   }
 
   public void update() {
@@ -71,12 +85,14 @@ public class RightColumn extends GridPane {
       visible.setSelected(false);
       multiple.setDisable(true);
       divsion.setDisable(true);
+      entityX.setDisable(true);
       return;
     } else {
       choiceBox.setDisable(false);
       visible.setDisable(false);
       multiple.setDisable(false);
       divsion.setDisable(false);
+      entityX.setDisable(false);
     }
 
     choiceBox.getItems().add(null);
@@ -112,6 +128,8 @@ public class RightColumn extends GridPane {
 
     visible.selectedProperty().bindBidirectional(rect.getNode().visibleProperty());
     rect.mouseTransparentProperty().bind(visible.selectedProperty().map(s -> !s));
+    entityX.valueProperty().bindBidirectional(FXGL.<GameApp>getAppCast().entity.xProperty());
+    entityY.valueProperty().bindBidirectional(FXGL.<GameApp>getAppCast().entity.yProperty());
     xField.valueProperty().bindBidirectional(rect.xProperty());
     yField.valueProperty().bindBidirectional(rect.yProperty());
 
