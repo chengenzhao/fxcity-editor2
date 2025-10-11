@@ -92,7 +92,7 @@ public class GameApp extends GameApplication {
     rect.setOnMousePressed(e -> {
       switch (e.getButton()){
         case PRIMARY -> {
-          var op = rect.transform(new Point2D(e.getX(), e.getY()));
+          var op = new Point2D(e.getX(), e.getY());//rect.transform(new Point2D(e.getX(), e.getY()));
           var x = op.getX();
           var y = op.getY();
           var ax = rect.getRotation().getPivotX();
@@ -101,7 +101,7 @@ public class GameApp extends GameApplication {
           var ry = rect.getY();
 
           rect.setOnMouseDragged(ee -> {
-            var p = rect.transform(new Point2D(ee.getX(), ee.getY()));
+            var p = new Point2D(ee.getX(), ee.getY());//rect.transform(new Point2D(ee.getX(), ee.getY()));
             var dx = p.getX() - x;
             var dy = p.getY() - y;
             rect.setX(rx + dx);
