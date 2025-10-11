@@ -85,7 +85,7 @@ public class BottomPane extends Pane {
     stopButton.setOnAction(_ -> select(currentFrame));
   }
 
-  public void buildKeyFrame(double timeInMillis){
+  public void buildKeyFrame(double timeInMillis) {
     var kf = addKeyFrame(timeInMillis);
 
     bindKeyFrameTag(kf, line, true);
@@ -105,12 +105,12 @@ public class BottomPane extends Pane {
     var app = FXGL.<GameApp>getAppCast();
     app.clear();
     var items = EditorApp.getEditorApp().leftColumn.getTreeItems();
-    for (int i = 0; i < items.size(); i++) {
+    for (int i = items.size() - 1; i >= 0; i--) {
       var item = items.get(i);
       var rect = keyFrames.getFirst().getRectBiMap().get(item).cloneWithTransforms();
       rect.update();
       var node = rect.getNode();
-      if(node instanceof JVG jvg){
+      if (node instanceof JVG jvg) {
         node = jvg.toImageView();
       }
       var json = jsonArray.getJsonArray(i);
@@ -287,7 +287,7 @@ public class BottomPane extends Pane {
 
     for (var item : EditorApp.getEditorApp().leftColumn.getTreeItems()) {
       var rect = map.get(item);
-      if(rect.getNode() instanceof JVG jvg){
+      if (rect.getNode() instanceof JVG jvg) {
         var textArea = new TextArea(jvg.toJsonString());
         textArea.setWrapText(true);
         textArea.setEditable(false);
@@ -297,7 +297,7 @@ public class BottomPane extends Pane {
         s.setOrientation(Orientation.HORIZONTAL);
         if (!vbox.getChildren().isEmpty())
           vbox.getChildren().add(s);
-        vbox.getChildren().addAll(new Label(EditorApp.getEditorApp().leftColumn.getText(item)),textArea);
+        vbox.getChildren().addAll(new Label(EditorApp.getEditorApp().leftColumn.getText(item)), textArea);
       }
     }
 
@@ -336,7 +336,7 @@ public class BottomPane extends Pane {
       if (!vbox.getChildren().isEmpty())
         vbox.getChildren().add(s);
       vbox.getChildren().addAll(new Label(EditorApp.getEditorApp().leftColumn.getText(item)), hbox,
-        new Label("Instant rotation data: "),textArea);
+        new Label("Instant rotation data: "), textArea);
     }
 
     var scrollpane = new ScrollPane(vbox);
