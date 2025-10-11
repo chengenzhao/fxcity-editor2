@@ -107,7 +107,8 @@ public class BottomPane extends Pane {
     var items = EditorApp.getEditorApp().leftColumn.getTreeItems();
     for (int i = items.size() - 1; i >= 0; i--) {
       var item = items.get(i);
-      var rect = keyFrames.getFirst().getRectBiMap().get(item).cloneWithTransforms();
+      var originalRect = keyFrames.getFirst().getRectBiMap().get(item);
+      var rect = originalRect.deepClone();
       rect.update();
       var node = rect.getNode();
       if (node instanceof JVG jvg) {

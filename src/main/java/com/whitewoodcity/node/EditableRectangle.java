@@ -222,10 +222,12 @@ public class EditableRectangle extends Rectangle {
     return rect;
   }
 
-  public EditableRectangle cloneWithTransforms() {
+  public EditableRectangle deepClone() {
     var rect = this.clone();
     rect.rotates.clear();
     rotates.forEach(r -> rect.addRotate(r.clone()));
+    rect.getNode().setOpacity(this.getNode().getOpacity());
+    rect.getNode().setVisible(this.getNode().isVisible());
     return rect;
   }
 
