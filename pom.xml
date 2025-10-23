@@ -11,10 +11,10 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <junit.version>5.10.2</junit.version>
+        <junit.version>6.0.0</junit.version>
         <fxcity.version>0.9.6</fxcity.version>
         <guava.version>33.5.0-jre</guava.version>
-        <vertx.version>5.0.4</vertx.version>
+        <vertx.version>5.0.5</vertx.version>
     </properties>
 
     <dependencies>
