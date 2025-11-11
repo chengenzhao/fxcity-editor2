@@ -315,9 +315,30 @@ public class BottomPane extends Pane {
     Dialog<ButtonType> dialog = new Dialog<>();
 
     var vbox = new VBox();
-//    var kf = currentFrame;
     var map = currentFrame.getRectBiMap();
     vbox.setSpacing(5);
+
+    var save = new Button("Save");
+    vbox.getChildren().add(save);
+    save.setOnAction(_ -> {
+      var chooser = new FileChooser();
+      chooser.setInitialFileName("idle.act");
+      var file = chooser.showSaveDialog(this.getScene().getWindow());
+      if(file!=null) {
+        var json = new JsonObject();
+        for (var item : EditorApp.getEditorApp().leftColumn.getTreeItems()) {
+          var rect = map.get(item);
+          var obj = extractJsonFromNode(rect);
+          json.put(EditorApp.getEditorApp().leftColumn.getText(item),obj);
+        }
+        try {
+          Files.write(Paths.get(file.getPath()), json.toString().getBytes());
+        } catch (IOException e) {
+          throw new RuntimeException(e);
+        }
+      }
+      dialog.close();
+    });
 
     for (var item : EditorApp.getEditorApp().leftColumn.getTreeItems()) {
       var rect = map.get(item);
