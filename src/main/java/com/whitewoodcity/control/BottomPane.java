@@ -400,6 +400,37 @@ public class BottomPane extends Pane {
     var vbox = new VBox();
     vbox.setSpacing(5);
 
+    var save = new Button("Save");
+    vbox.getChildren().add(save);
+    save.setOnAction(_ -> {
+      var chooser = new FileChooser();
+      chooser.setInitialFileName("name.act");
+      var file = chooser.showSaveDialog(this.getScene().getWindow());
+      if(file!=null) {
+        var json = new JsonObject();
+
+        for (var item : EditorApp.getEditorApp().leftColumn.getTreeItems()) {
+          var animationData = new JsonArray();
+
+          var jsons = keyFrames.stream().map(kf -> extractJsonFromNode(kf.getTimeInSeconds() * 1000, kf.getRectBiMap().get(item))).toList();
+          animationData.addAll(new JsonArray(jsons));
+
+          var texture = keyFrames.getFirst().getRectBiMap().get(item);
+          var jsonNode = extractJsonFromNode(totalTime.getDouble() * 1000, texture);
+          animationData.add(jsonNode);
+
+          json.put(EditorApp.getEditorApp().leftColumn.getText(item),animationData);
+        }
+
+        try {
+          Files.write(Paths.get(file.getPath()), json.toString().getBytes());
+        } catch (IOException e) {
+          throw new RuntimeException(e);
+        }
+      }
+      dialog.close();
+    });
+
     for (var item : EditorApp.getEditorApp().leftColumn.getTreeItems()) {
       var animationData = new JsonArray();
 

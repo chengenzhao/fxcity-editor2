@@ -21,7 +21,7 @@ public class EditorApp extends Application {
   }
 
   @Override
-  public void start(Stage stage) throws Exception {
+  public void start(Stage stage) {
 
     var gamePane = GameApp.embeddedLaunch(new GameApp());
     gamePane.setRenderFill(Color.TRANSPARENT);
