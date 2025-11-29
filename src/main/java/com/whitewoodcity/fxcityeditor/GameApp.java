@@ -92,7 +92,7 @@ public class GameApp extends GameApplication {
     rect.setOnMousePressed(e -> {
       switch (e.getButton()){
         case PRIMARY -> {
-          var op = new Point2D(e.getX(), e.getY());//rect.transform(new Point2D(e.getX(), e.getY()));
+          var op = rect.clone().transform(new Point2D(e.getX(), e.getY()));//new Point2D(e.getX(), e.getY());
           var x = op.getX();
           var y = op.getY();
           var ax = rect.getRotation().getPivotX();
@@ -101,7 +101,7 @@ public class GameApp extends GameApplication {
           var ry = rect.getY();
 
           rect.setOnMouseDragged(ee -> {
-            var p = new Point2D(ee.getX(), ee.getY());//rect.transform(new Point2D(ee.getX(), ee.getY()));
+            var p = rect.clone().transform(new Point2D(ee.getX(), ee.getY()));//new Point2D(ee.getX(), ee.getY());
             var dx = p.getX() - x;
             var dy = p.getY() - y;
             rect.setX(rx + dx);
@@ -126,13 +126,13 @@ public class GameApp extends GameApplication {
     rect.getRotation().setPivotY(pivotY);
 
     arrow.getOrigin().setOnMousePressed(oe -> {
-      var op = oe;//rect.transform(new Point2D(oe.getX(), oe.getY()));
+      var op = rect.clone().transform(new Point2D(oe.getX(), oe.getY()));//oe;
       var ox = op.getX();
       var oy = op.getY();
       var tx = arrow.getX1();
       var ty = arrow.getY1();
       arrow.getOrigin().setOnMouseDragged(e -> {
-        var p = e;//rect.transform(new Point2D(e.getX(), e.getY()));
+        var p = rect.clone().transform(new Point2D(e.getX(), e.getY()));//e;
         double dx = p.getX() - ox;
         double dy = p.getY() - oy;
         var x1 = tx + dx;
