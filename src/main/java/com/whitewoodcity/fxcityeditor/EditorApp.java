@@ -43,4 +43,9 @@ public class EditorApp extends Application {
 
     stage.show();
   }
+
+  static void main(String... args) {
+    System.setProperty("prism.lcdtext", "false");
+    EditorApp.launch(EditorApp.class, args);
+  }
 }
