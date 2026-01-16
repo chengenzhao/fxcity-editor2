@@ -14,7 +14,7 @@
         <junit.version>6.0.0</junit.version>
         <fxcity.version>0.9.9</fxcity.version>
         <guava.version>33.5.0-jre</guava.version>
-        <vertx.version>5.0.5</vertx.version>
+        <vertx.version>5.0.7</vertx.version>
     </properties>
 
     <dependencies>
