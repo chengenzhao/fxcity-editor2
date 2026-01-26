@@ -29,7 +29,7 @@ public class EditorApp extends Application {
     var vbox = new VBox();
     var border = new BorderPane();
     border.setCenter(gamePane);
-    border.setRight(rightColumn);
+    border.setRight(new ScrollPane(rightColumn));
     border.setLeft(leftColumn);
     border.setBottom(bottomPane);
     vbox.getChildren().addAll(mainMenu, border);

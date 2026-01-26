@@ -6,10 +6,7 @@ import com.whitewoodcity.fxcityeditor.GameApp;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -79,7 +76,10 @@ public class LeftColumn extends VBox {
     var upNDown = new HBox(up, down);
     upNDown.setAlignment(Pos.BASELINE_LEFT);
     var del = new Button("×");
-    hBox.getChildren().addAll(upNDown, textField, del);
+    var visible = new CheckBox();
+    visible.setSelected(true);
+    hBox.getChildren().addAll(upNDown, textField, del, visible);
+    hBox.setAlignment(Pos.BASELINE_LEFT);
 
     del.setOnAction(_ -> {
       if (treeView.getSelectionModel().getSelectedItem() == treeItem) {
@@ -93,6 +93,10 @@ public class LeftColumn extends VBox {
       FXGL.<GameApp>getAppCast().update();
     });
     del.setId(DELETE_BUTTON_PREFIX + Math.random());
+
+    visible.selectedProperty().addListener((_,_,v)->
+      EditorApp.getEditorApp().bottomPane.keyFrames.forEach(f -> f.getRectBiMap().get(treeItem).getNode().setVisible(v))
+    );
 
     up.setOnAction(_ -> {
       var i = root.getChildren().indexOf(treeItem);
