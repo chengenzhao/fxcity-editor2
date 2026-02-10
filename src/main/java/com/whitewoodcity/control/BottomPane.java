@@ -378,11 +378,11 @@ public class BottomPane extends Pane {
   JsonArray buildTransitionJson() {
     FXGL.<GameApp>getAppCast().update();
     var arrayNode = new JsonArray();
+    keyFrames.sort(Comparator.comparingDouble(KeyFrame::getTimeInSeconds));
     for (var item : EditorApp.getEditorApp().leftColumn.getTreeItems()) {
       var animationData = new JsonArray();
 
-      var jsons = keyFrames.stream().sorted(Comparator.comparingDouble(KeyFrame::getTimeInSeconds))
-        .map(kf -> extractJsonFromNode(kf.getTimeInSeconds() * 1000, kf.getRectBiMap().get(item))).toList();
+      var jsons = keyFrames.stream().map(kf -> extractJsonFromNode(kf.getTimeInSeconds() * 1000, kf.getRectBiMap().get(item))).toList();
       animationData.addAll(new JsonArray(jsons));
 
       var rect = keyFrames.getFirst().getRectBiMap().get(item);
