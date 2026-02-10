@@ -127,7 +127,7 @@ public class BottomPane extends Pane {
   public KeyFrame addKeyFrame(double timeInMillis) {
     var kf = generateKeyFrame(Duration.millis(timeInMillis));
 
-    kf.copyFrom(keyFrames.getLast());
+    kf.copyFrom(currentFrame);
     keyFrames.add(kf);
 
     return kf;
