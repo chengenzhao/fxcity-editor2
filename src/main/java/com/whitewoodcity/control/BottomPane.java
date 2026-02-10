@@ -86,6 +86,7 @@ public class BottomPane extends Pane {
   }
 
   public void buildKeyFrame(double timeInMillis) {
+    keyFrames.sort(Comparator.comparingDouble(KeyFrame::getTimeInSeconds));
     var kf = addKeyFrame(timeInMillis);
 
     bindKeyFrameTag(kf, line, true);
