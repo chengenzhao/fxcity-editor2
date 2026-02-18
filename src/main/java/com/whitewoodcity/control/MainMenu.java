@@ -11,11 +11,14 @@ import com.whitewoodcity.fxgl.vectorview.JVG;
 import com.whitewoodcity.node.EditableRectangle;
 
 public class MainMenu extends MenuBar {
-  Menu menu = new Menu("File");
+  Menu fileMenu = new Menu("Files");
   MenuItem save = new MenuItem("Save");
   MenuItem load = new MenuItem("Load");
   MenuItem clear = new MenuItem("Clear");
   MenuItem clearBitmap = new MenuItem("Clear bitmaps ");
+
+  Menu settingMenu = new Menu("Settings");
+  MenuItem globalSetting = new MenuItem("Dev Setting");
 
   public static final String DELETE_BUTTON_PREFIX = "deleteButton";
   public static final String NAME = "name";
@@ -25,8 +28,9 @@ public class MainMenu extends MenuBar {
   public static final String INHERITANCE = "inheritance";
 
   public MainMenu() {
-    menu.getItems().addAll(save, load, clear, clearBitmap);
-    getMenus().add(menu);
+    fileMenu.getItems().addAll(save, load, clear, clearBitmap);
+    settingMenu.getItems().addAll(globalSetting);
+    getMenus().addAll(fileMenu, settingMenu);
 
     load.setOnAction(_ -> {
       var fileChooser = new FileChooser();
@@ -125,6 +129,10 @@ public class MainMenu extends MenuBar {
       } catch (IOException e) {
         throw new RuntimeException(e);
       }
+    });
+
+    globalSetting.setOnAction(_->{
+      FXGL.<GameApp>getAppCast().globalSettingStage.show();
     });
   }
 
@@ -234,5 +242,4 @@ public class MainMenu extends MenuBar {
     return rect;
   }
 
-  ;
 }

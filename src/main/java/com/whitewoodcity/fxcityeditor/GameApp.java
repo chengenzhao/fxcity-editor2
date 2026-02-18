@@ -6,10 +6,13 @@ import module java.base;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.dsl.FXGL;
+import com.whitewoodcity.control.GlobalSettingStage;
 import com.whitewoodcity.node.EditableRectangle;
 import com.whitewoodcity.node.arrows.Arrow;
 
 public class GameApp extends GameApplication {
+
+  public GlobalSettingStage globalSettingStage = new GlobalSettingStage();
 
   int HEIGHT = 1000;
   int WIDTH = (int) (Screen.getPrimary().getBounds().getWidth() / Screen.getPrimary().getBounds().getHeight() * 1000);
@@ -38,7 +41,18 @@ public class GameApp extends GameApplication {
     redDot.setFill(Color.RED);
     entity.getViewComponent().addDevChild(redDot);
     entity.setX(200);
-    entity.setY(200);
+    entity.setY(100);
+
+    var line = new Line(0,400,WIDTH/2,400);
+    line.endXProperty().bind(line.startXProperty().add(WIDTH/2));
+    line.endYProperty().bindBidirectional(line.startYProperty());
+    line.setStroke(Color.RED);
+    entity.getViewComponent().addDevChild(line);
+
+    globalSettingStage.entityX.valueProperty().bindBidirectional(entity.xProperty());
+    globalSettingStage.entityY.valueProperty().bindBidirectional(entity.yProperty());
+    globalSettingStage.lineX.valueProperty().bindBidirectional(line.startXProperty());
+    globalSettingStage.lineY.valueProperty().bindBidirectional(line.startYProperty());
   }
 
   public void clear(){
