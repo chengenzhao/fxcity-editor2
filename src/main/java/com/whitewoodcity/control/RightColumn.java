@@ -16,7 +16,7 @@ public class RightColumn extends GridPane {
   ChoiceBox<TreeItem<Node>> choiceBox = new ChoiceBox<>();
   CheckBox visible = new CheckBox();
   Button multiple = new Button("*");
-  Button divsion = new Button("/");
+  Button division = new Button("/");
   NumberField factor = new NumberField(1, 100);
   NumberField xField = new NumberField(-(int) Screen.getPrimary().getBounds().getWidth(), (int) Screen.getPrimary().getBounds().getWidth());
   NumberField yField = new NumberField(-(int) Screen.getPrimary().getBounds().getHeight(), (int) Screen.getPrimary().getBounds().getHeight());
@@ -31,7 +31,7 @@ public class RightColumn extends GridPane {
     this.add(choiceBox, 1, 0);
     this.add(new Label("Visible:"), 0, 1);
     this.add(visible, 1, 1);
-    this.add(new HBox(multiple, divsion), 0, 2);
+    this.add(new HBox(multiple, division), 0, 2);
     this.add(factor, 1, 2);
     this.add(new Label("X:"), 0, 3);
     this.add(xField, 1, 3);
@@ -61,7 +61,7 @@ public class RightColumn extends GridPane {
     this.getChildren().remove(unchangedRows * 2, this.getChildren().size());
 
     multiple.setOnAction(null);
-    divsion.setOnAction(null);
+    division.setOnAction(null);
 
   }
 
@@ -74,14 +74,14 @@ public class RightColumn extends GridPane {
       visible.setDisable(true);
       visible.setSelected(false);
       multiple.setDisable(true);
-      divsion.setDisable(true);
+      division.setDisable(true);
       xField.setDisable(true);//entityX -> xField
       return;
     } else {
       choiceBox.setDisable(false);
       visible.setDisable(false);
       multiple.setDisable(false);
-      divsion.setDisable(false);
+      division.setDisable(false);
       xField.setDisable(false);
     }
 
@@ -137,7 +137,7 @@ public class RightColumn extends GridPane {
     });
 
     multiple.setOnAction(_ -> multiply(factor.getDouble()));
-    divsion.setOnAction(_ -> multiply(1.0 / factor.getDouble()));
+    division.setOnAction(_ -> multiply(1.0 / factor.getDouble()));
 
     this.add(new Label("PivotX:"), 0, unchangedRows);
     var pivotX = new NumberField(Integer.MIN_VALUE, Integer.MAX_VALUE);
