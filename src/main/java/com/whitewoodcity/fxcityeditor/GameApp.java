@@ -14,8 +14,8 @@ public class GameApp extends GameApplication {
 
   public GlobalSettingStage globalSettingStage = new GlobalSettingStage();
 
-  int HEIGHT = 1000;
-  int WIDTH = (int) (Screen.getPrimary().getBounds().getWidth() / Screen.getPrimary().getBounds().getHeight() * 1000);
+  int HEIGHT = (int) AbstractGameScene.calculateGameHeight();
+  int WIDTH = (int) AbstractGameScene.calculateGameWdith();
 
   public Entity entity;
 
