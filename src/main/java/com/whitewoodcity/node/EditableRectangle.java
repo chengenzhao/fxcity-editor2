@@ -4,7 +4,7 @@ import module javafx.controls;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.whitewoodcity.fxgl.texture.Texture;
-import com.whitewoodcity.fxgl.vectorview.JVG;
+import com.whitewoodcity.javafx.jvg.JVG;
 import io.vertx.core.json.JsonObject;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.Rectangle;

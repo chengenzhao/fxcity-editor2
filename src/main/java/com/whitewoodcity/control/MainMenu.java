@@ -7,7 +7,7 @@ import com.almasb.fxgl.dsl.FXGL;
 import com.whitewoodcity.fxcityeditor.EditorApp;
 import com.whitewoodcity.fxcityeditor.GameApp;
 import com.whitewoodcity.fxgl.transition.RotateJsonKeys;
-import com.whitewoodcity.fxgl.vectorview.JVG;
+import com.whitewoodcity.javafx.jvg.JVG;
 import com.whitewoodcity.node.EditableRectangle;
 
 public class MainMenu extends MenuBar {

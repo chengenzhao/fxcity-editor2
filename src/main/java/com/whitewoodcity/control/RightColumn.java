@@ -4,7 +4,7 @@ import module javafx.controls;
 import com.almasb.fxgl.dsl.FXGL;
 import com.whitewoodcity.fxcityeditor.EditorApp;
 import com.whitewoodcity.fxcityeditor.GameApp;
-import com.whitewoodcity.fxgl.vectorview.JVG;
+import com.whitewoodcity.javafx.jvg.JVG;
 import com.whitewoodcity.node.EditableRectangle;
 import com.whitewoodcity.node.NumberField;
 import javafx.util.StringConverter;

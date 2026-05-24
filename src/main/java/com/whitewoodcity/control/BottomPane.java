@@ -8,7 +8,7 @@ import com.whitewoodcity.fxcityeditor.GameApp;
 import com.whitewoodcity.fxgl.texture.TransitTexture;
 import com.whitewoodcity.fxgl.transition.RotateJsonKeys;
 import com.whitewoodcity.fxgl.transition.Rotates;
-import com.whitewoodcity.fxgl.vectorview.JVG;
+import com.whitewoodcity.javafx.jvg.JVG;
 import com.whitewoodcity.javafx.binding.XBindings;
 import com.whitewoodcity.node.EditableRectangle;
 import com.whitewoodcity.node.KeyFrame;
