@@ -30,7 +30,7 @@ public class MainMenu extends MenuBar {
   public MainMenu() {
     fileMenu.getItems().addAll(save, load, clear, clearBitmap);
     settingMenu.getItems().addAll(globalSetting);
-    getMenus().addAll(fileMenu, settingMenu);
+    this.getMenus().addAll(fileMenu, settingMenu);
 
     load.setOnAction(_ -> {
       var fileChooser = new FileChooser();
