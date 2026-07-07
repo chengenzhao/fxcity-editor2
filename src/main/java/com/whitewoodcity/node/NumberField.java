@@ -28,7 +28,11 @@ public class NumberField extends TextField {
         positionCaret(1);
         return null;
       }
-      if (newText.trim().equals(".")) {
+      if (newText.trim().equals("-")){
+        setText("-0");
+        positionCaret(2);
+        return null;
+      }else if (newText.trim().equals(".")) {
         setText("0.");
         positionCaret(2);
         value.setDouble(0);

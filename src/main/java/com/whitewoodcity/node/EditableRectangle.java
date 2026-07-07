@@ -68,6 +68,11 @@ public class EditableRectangle extends Rectangle {
   }
 
   public void update() {
+    if(node instanceof JVG jvg){
+      var xy = jvg.getXY();
+      this.setX(xy.getX());
+      this.setY(xy.getY());
+    }
     List<Rotate> rotations = this.getTransforms().stream().map(Rotate.class::cast).toList();
     assert rotations.size() == rotates.size();
 

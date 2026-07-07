@@ -56,18 +56,15 @@ public class GlobalSettingStage extends Stage {
               imageView.setX(imageView.getX() + translateX.getValue());
               imageView.setY(imageView.getY() + translateY.getValue());
             }
-            case JVG jvg -> {
-              jvg.move(translateX.getValue(), translateY.getValue());
-              rect.setX(rect.getX() + translateX.getValue());
-              rect.setY(rect.getY() + translateY.getValue());
-              var r = rect.getRotates().getFirst();
-              r.setPivotX(r.getPivotX() + translateX.getValue());
-              r.setPivotY(r.getPivotY() + translateY.getValue());
-              rect.update();
-            }
-            default -> {
-            }
+            case JVG jvg -> jvg.move(translateX.getValue(), translateY.getValue());
+            default -> {}
           }
+          rect.setX(rect.getX() + translateX.getValue());
+          rect.setY(rect.getY() + translateY.getValue());
+          var r = rect.getRotates().getFirst();
+          r.setPivotX(r.getPivotX() + translateX.getValue());
+          r.setPivotY(r.getPivotY() + translateY.getValue());
+          rect.update();
         });
       });
     });
