@@ -20,16 +20,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up JDK 17
-      uses: actions/setup-java@v4
+    - uses: actions/checkout@v5
+    - name: Set up JDK 26
+      uses: actions/setup-java@v5
       with:
-        java-version: '17'
+        java-version: '26'
         distribution: 'temurin'
         cache: maven
-    - name: Build with Maven
-      run: mvn -B package --file pom.xml
 
-    # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
-    - name: Update dependency graph
-      uses: advanced-security/maven-dependency-submission-action@571e99aab1055c2e71a1e2309b9691de18d6b7d6
+    - name: Install WiX Toolset (Windows)
+      if: matrix.os == 'windows-latest'
+      run: dotnet tool install --global WiX
+
+    - name: Build with Maven
+      run: mvn clean package -DskipTests
+
+    - name: Generate Installer with jpackage
+      run: jpackage --input target/ --name "FXCity Editor" --main-jar "fxcity-editor2-1.0-SNAPSHOT.jar" --main-class "com.whitewoodcity.fxcityeditor.EditorApp" --type msi --dest output/ --app-version "1.0.0" --vendor "White Wood City"
+
+    - uses: actions/upload-artifact@v7
+      with:
+        name: win-build
+        path: output/*
+        retention-days: 1
