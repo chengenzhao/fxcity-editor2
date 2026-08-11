@@ -26,18 +26,31 @@ jobs:
       with:
         java-version: '26'
         distribution: 'liberica'
-        java-package: jdk+fx
+        java-package: jdk
         cache: maven
-
-    - name: Install WiX Toolset (Windows)
-      if: matrix.os == 'windows-latest'
-      run: dotnet tool install --global WiX
 
     - name: Build with Maven
       run: mvn clean package -DskipTests
 
-    - name: Generate Installer with jpackage
-      run: jpackage --input target/ --name "FXCity Editor" --main-jar "fxcity-editor2.jar" --main-class "com.whitewoodcity.fxcityeditor.EditorApp" --type msi --dest output/ --app-version "1.0.0" --vendor "White Wood City"
+    - name: Build Runtime
+      run: mvn javafx:jlink
+
+    - name: jpackage build Windows exe
+      shell: pwsh
+      run: |
+        jpackage `
+          --type exe `
+          --name "FXCity Editor" `
+          --app-version "1.0.0" `
+          --module com.whitewoodcity.fxcityeditor/com.whitewoodcity.fxcityeditor.EditorApp `
+          --module-path “target/classes” `
+          --runtime-image target/app `
+          --dest ./output `
+          --win-dir-chooser `
+          --win-shortcut
+
+#    - name: Generate Installer with jpackage
+#      run: jpackage --input target/ --name "FXCity Editor" --main-jar "fxcity-editor2.jar" --main-class "com.whitewoodcity.fxcityeditor.EditorApp" --type msi --dest output/ --app-version "1.0.0" --vendor "White Wood City"
 
     - uses: actions/upload-artifact@v7
       with:
