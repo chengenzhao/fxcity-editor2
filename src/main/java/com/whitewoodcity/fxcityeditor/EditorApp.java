@@ -28,6 +28,8 @@ public class EditorApp extends Application {
 
     gamePane.setViewOrder(Double.MAX_VALUE);
 
+    mainMenu.setViewOrder(-1);
+
     var vbox = new VBox();
     var border = new BorderPane();
     border.setCenter(gamePane);
