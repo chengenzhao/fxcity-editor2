@@ -26,6 +26,8 @@ public class EditorApp extends Application {
     var gamePane = GameApp.embeddedLaunch(new GameApp());
     gamePane.setRenderFill(Color.TRANSPARENT);
 
+    gamePane.setViewOrder(Double.MAX_VALUE);
+
     var vbox = new VBox();
     var border = new BorderPane();
     border.setCenter(gamePane);

@@ -41,16 +41,13 @@ jobs:
         jpackage `
           --type exe `
           --name "FXCity Editor" `
-          --app-version "1.0.0" `
+          --app-version "1.1.0" `
           --module com.whitewoodcity.fxcityeditor/com.whitewoodcity.fxcityeditor.EditorApp `
           --module-path “target/classes” `
           --runtime-image target/app `
           --dest ./output `
           --win-dir-chooser `
           --win-shortcut
-
-#    - name: Generate Installer with jpackage
-#      run: jpackage --input target/ --name "FXCity Editor" --main-jar "fxcity-editor2.jar" --main-class "com.whitewoodcity.fxcityeditor.EditorApp" --type msi --dest output/ --app-version "1.0.0" --vendor "White Wood City"
 
     - uses: actions/upload-artifact@v7
       with:
