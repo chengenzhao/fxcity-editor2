@@ -106,6 +106,7 @@ public class BottomPane extends Pane {
     var app = FXGL.<GameApp>getAppCast();
     app.clear();
     var items = EditorApp.getEditorApp().leftColumn.getTreeItems();
+    var list = new ArrayList<Transition>();
     for (int i = items.size() - 1; i >= 0; i--) {
       var item = items.get(i);
       var originalRect = keyFrames.getFirst().getRectBiMap().get(item);
@@ -120,8 +121,9 @@ public class BottomPane extends Pane {
       var rotates = new Rotates(node);
       var tran = rotates.buildTransition("", json.toString());
       tran.setCycleCount(cycleCount);
-      tran.play();
+      list.add(tran);
     }
+    list.forEach(Animation::play);
   }
 
   public KeyFrame addKeyFrame(double timeInMillis) {
