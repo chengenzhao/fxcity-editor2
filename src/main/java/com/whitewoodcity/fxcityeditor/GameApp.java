@@ -9,6 +9,9 @@ import com.almasb.fxgl.dsl.FXGL;
 import com.whitewoodcity.control.GlobalSettingStage;
 import com.whitewoodcity.node.EditableRectangle;
 import com.whitewoodcity.node.arrows.Arrow;
+import javafx.geometry.Point2D;
+import javafx.scene.Cursor;
+import javafx.scene.paint.Color;
 
 public class GameApp extends GameApplication {
 
@@ -56,6 +59,7 @@ public class GameApp extends GameApplication {
   }
 
   public void clear(){
+    EditorApp.getEditorApp().bottomPane.clearTransition();
     for(var v:entity.getViewComponent().getChildren()){
       var rect = EditableRectangle.getRectByNode(v);
       if(rect==null) continue;
