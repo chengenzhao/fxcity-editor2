@@ -167,7 +167,7 @@ public class BottomPane extends Pane {
         var cx = e.getX() - ox;
         var ex = ox + cx - line.getStartX();
 
-        ex = Math.min(Math.max(0, ex), line.getEndX() - line.getStartX());
+        ex = Math.clamp(ex, 0, line.getEndX() - line.getStartX());
 
         kf.setTime(Duration.seconds(ex * totalTime.getDouble() / (line.getEndX() - line.getStartX())));
       });
@@ -294,6 +294,32 @@ public class BottomPane extends Pane {
 //    var kf = currentFrame;
     var map = currentFrame.getRectBiMap();
     vbox.setSpacing(5);
+
+    var save = new Button("Save");
+
+    save.setOnAction(_ -> {
+      var chooser = new FileChooser();
+      LocalDateTime now = LocalDateTime.now(ZoneId.systemDefault());
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd|HH:mm:ss");
+      chooser.setInitialFileName(now.format(formatter));
+      var file = chooser.showSaveDialog(this.getScene().getWindow());
+      if(file.mkdir()){
+        for (var item : EditorApp.getEditorApp().leftColumn.getTreeItems()) {
+          var rect = map.get(item);
+          if (rect.getNode() instanceof JVG jvg) {
+            try {
+              Files.write(Paths.get(file.getAbsolutePath(), EditorApp.getEditorApp().leftColumn.getText(item)), jvg.toJsonString().getBytes());
+            } catch (IOException e) {
+              throw new RuntimeException(e);
+            }
+          }
+        }
+
+        dialog.close();
+      };
+    });
+
+    vbox.getChildren().add(save);
 
     for (var item : EditorApp.getEditorApp().leftColumn.getTreeItems()) {
       var rect = map.get(item);
