@@ -9,6 +9,10 @@ import com.whitewoodcity.fxcityeditor.GameApp;
 import com.whitewoodcity.fxgl.transition.RotateJsonKeys;
 import com.whitewoodcity.javafx.jvg.JVG;
 import com.whitewoodcity.node.EditableRectangle;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.image.Image;
 
 public class MainMenu extends MenuBar {
   Menu fileMenu = new Menu("Files");
@@ -19,6 +23,7 @@ public class MainMenu extends MenuBar {
 
   Menu settingMenu = new Menu("Settings");
   MenuItem globalSetting = new MenuItem("Dev Setting");
+  MenuItem solid = new MenuItem("Solid");
 
   public static final String DELETE_BUTTON_PREFIX = "deleteButton";
   public static final String NAME = "name";
@@ -29,7 +34,7 @@ public class MainMenu extends MenuBar {
 
   public MainMenu() {
     fileMenu.getItems().addAll(save, load, clear, clearBitmap);
-    settingMenu.getItems().addAll(globalSetting);
+    settingMenu.getItems().addAll(globalSetting, solid);
     this.getMenus().addAll(fileMenu, settingMenu);
 
     load.setOnAction(_ -> {
@@ -133,6 +138,16 @@ public class MainMenu extends MenuBar {
 
     globalSetting.setOnAction(_->{
       FXGL.<GameApp>getAppCast().globalSettingStage.show();
+    });
+
+    solid.setOnAction(_->{
+        for (var item : EditorApp.getEditorApp().leftColumn.getTreeItems()) {
+          EditorApp.getEditorApp().bottomPane.keyFrames.stream()
+            .map(kf -> kf.getRectBiMap().get(item).getNode())
+            .filter(n -> n instanceof JVG)
+            .map(JVG.class::cast)
+            .forEach(JVG::solid);
+        }
     });
   }
 
