@@ -41,7 +41,7 @@ jobs:
         jpackage `
           --type exe `
           --name "FXCity Editor" `
-          --app-version "1.5.0" `
+          --app-version "1.6.0" `
           --module com.whitewoodcity.fxcityeditor/com.whitewoodcity.fxcityeditor.EditorApp `
           --module-path “target/classes” `
           --runtime-image target/app `
