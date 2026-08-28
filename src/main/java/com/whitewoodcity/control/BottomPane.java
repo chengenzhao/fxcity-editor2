@@ -306,6 +306,7 @@ public class BottomPane extends Pane {
     textarea.setWrapText(true);
     textarea.setEditable(false);
     textarea.setPrefHeight(100);
+    var components = "";
     var text = "";
     for (var item : EditorApp.getEditorApp().leftColumn.getTreeItems()) {
       var rect = map.get(item);
@@ -313,9 +314,10 @@ public class BottomPane extends Pane {
         var fileName= EditorApp.getEditorApp().leftColumn.getText(item);
         var compName = fileName.replaceAll("\\.jvg$", "").toUpperCase();
         text += compName + "(\"" + fileName +"\"," + jvg.getTransforms().size()+ "),\n\r";
+        components = compName + (components.isBlank()?"":",") + components;
       }
     }
-    textarea.setText(text);
+    textarea.setText(components + "\n\r\n\r"+ text);
 
     vbox.getChildren().addAll(textarea,new Separator());
 
