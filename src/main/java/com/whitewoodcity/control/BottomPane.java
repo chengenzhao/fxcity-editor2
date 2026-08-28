@@ -3,19 +3,21 @@ package com.whitewoodcity.control;
 import module java.base;
 import module javafx.controls;
 import com.almasb.fxgl.dsl.FXGL;
+import com.google.common.collect.BiMap;
 import com.whitewoodcity.fxcityeditor.EditorApp;
 import com.whitewoodcity.fxcityeditor.GameApp;
 import com.whitewoodcity.fxgl.texture.TransitTexture;
 import com.whitewoodcity.fxgl.transition.RotateJsonKeys;
 import com.whitewoodcity.fxgl.transition.Rotates;
-import com.whitewoodcity.javafx.jvg.JVG;
 import com.whitewoodcity.javafx.binding.XBindings;
+import com.whitewoodcity.javafx.jvg.JVG;
 import com.whitewoodcity.node.EditableRectangle;
 import com.whitewoodcity.node.KeyFrame;
 import com.whitewoodcity.node.NumberField;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import javafx.scene.control.Label;
+import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
 import static com.whitewoodcity.control.MainMenu.DELETE_BUTTON_PREFIX;
@@ -295,6 +297,53 @@ public class BottomPane extends Pane {
     var map = currentFrame.getRectBiMap();
     vbox.setSpacing(5);
 
+    var save = createSaveButton(map, dialog);
+    vbox.getChildren().add(save);
+
+    vbox.getChildren().add(new Separator());
+
+    var textarea = new TextArea();
+    textarea.setWrapText(true);
+    textarea.setEditable(false);
+    textarea.setPrefHeight(100);
+    var text = "";
+    for (var item : EditorApp.getEditorApp().leftColumn.getTreeItems()) {
+      var rect = map.get(item);
+      if (rect.getNode() instanceof JVG jvg) {
+        var fileName= EditorApp.getEditorApp().leftColumn.getText(item);
+        var compName = fileName.replaceAll("\\.jvg$", "").toUpperCase();
+        text += compName + "(\"" + fileName +"\"," + jvg.getTransforms().size()+ "),\n\r";
+      }
+    }
+    textarea.setText(text);
+
+    vbox.getChildren().addAll(textarea,new Separator());
+
+    for (var item : EditorApp.getEditorApp().leftColumn.getTreeItems()) {
+      var rect = map.get(item);
+      if (rect.getNode() instanceof JVG jvg) {
+        var textArea = new TextArea(jvg.toJsonString());
+        textArea.wrapTextProperty().bind(textarea.wrapTextProperty());
+        textArea.editableProperty().bind(textarea.editableProperty());
+        textArea.prefHeightProperty().bind(textarea.prefHeightProperty());
+        var s = new Separator();
+        s.setPrefWidth(500);
+        s.setOrientation(Orientation.HORIZONTAL);
+        if (!vbox.getChildren().isEmpty())
+          vbox.getChildren().add(s);
+        vbox.getChildren().addAll(new Label(EditorApp.getEditorApp().leftColumn.getText(item)), textArea);
+      }
+    }
+
+    var scrollpane = new ScrollPane(vbox);
+    dialog.getDialogPane().setContent(scrollpane);
+    dialog.getDialogPane().getButtonTypes().add(okButtonType);
+    dialog.getDialogPane().lookupButton(okButtonType);
+
+    dialog.showAndWait();
+  }
+
+  private Button createSaveButton(BiMap<TreeItem<Node>, EditableRectangle> map, Dialog<ButtonType> dialog) {
     var save = new Button("Save");
 
     save.setOnAction(_ -> {
@@ -318,31 +367,7 @@ public class BottomPane extends Pane {
         dialog.close();
       };
     });
-
-    vbox.getChildren().add(save);
-
-    for (var item : EditorApp.getEditorApp().leftColumn.getTreeItems()) {
-      var rect = map.get(item);
-      if (rect.getNode() instanceof JVG jvg) {
-        var textArea = new TextArea(jvg.toJsonString());
-        textArea.setWrapText(true);
-        textArea.setEditable(false);
-        textArea.setPrefHeight(100);
-        var s = new Separator();
-        s.setPrefWidth(500);
-        s.setOrientation(Orientation.HORIZONTAL);
-        if (!vbox.getChildren().isEmpty())
-          vbox.getChildren().add(s);
-        vbox.getChildren().addAll(new Label(EditorApp.getEditorApp().leftColumn.getText(item)), textArea);
-      }
-    }
-
-    var scrollpane = new ScrollPane(vbox);
-    dialog.getDialogPane().setContent(scrollpane);
-    dialog.getDialogPane().getButtonTypes().add(okButtonType);
-    dialog.getDialogPane().lookupButton(okButtonType);
-
-    dialog.showAndWait();
+    return save;
   }
 
   private void showFrameData() {

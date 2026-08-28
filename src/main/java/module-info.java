@@ -6,4 +6,5 @@ open module com.whitewoodcity.fxcityeditor {
   requires com.fasterxml.jackson.databind;
   requires io.vertx.core;
   requires javafx.controls;
+  requires org.jspecify;
 }
