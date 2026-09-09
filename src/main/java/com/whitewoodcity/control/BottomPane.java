@@ -354,7 +354,7 @@ public class BottomPane extends Pane {
       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd|HH:mm:ss");
       chooser.setInitialFileName(now.format(formatter));
       var file = chooser.showSaveDialog(this.getScene().getWindow());
-      if(file.mkdir()){
+      if(file!=null&&file.mkdir()){
         for (var item : EditorApp.getEditorApp().leftColumn.getTreeItems()) {
           var rect = map.get(item);
           if (rect.getNode() instanceof JVG jvg) {

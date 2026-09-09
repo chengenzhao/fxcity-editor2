@@ -9,6 +9,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
@@ -69,6 +70,40 @@ public class GlobalSettingStage extends Stage {
       });
     });
 
-    gridpane.add(button, 0, 7, 2, 1);
+    var multiply = new Button("*");
+    var divide = new Button("/");
+    var hBox = new HBox(multiply, divide);
+    gridpane.add(hBox, 0,7);
+    var factor = new NumberField(1,2);
+    factor.setText("1.1");
+    gridpane.add(factor, 1,7);
+
+    multiply.setOnAction(_-> zoom(factor.getDouble()));
+    divide.setOnAction(_-> zoom(1.0/factor.getDouble()));
+
+    gridpane.add(button, 0, 8, 2, 1);
+  }
+
+  private void zoom(double f){
+    EditorApp.getEditorApp().bottomPane.keyFrames.forEach(keyFrame -> {
+      keyFrame.getRectBiMap().values().forEach(rect -> {
+        switch (rect.getNode()) {
+          case ImageView imageView -> {
+            imageView.setFitWidth(imageView.getFitWidth() * f);
+            imageView.setFitHeight(imageView.getFitHeight() * f);
+          }
+          case JVG jvg -> jvg.zoom(f);
+          default -> {}
+        }
+        rect.setX(rect.getX() * f);
+        rect.setY(rect.getY() * f);
+        rect.setWidth(rect.getWidth() * f);
+        rect.setHeight(rect.getHeight() * f);
+        var r = rect.getRotates().getFirst();
+        r.setPivotX(r.getPivotX() * f);
+        r.setPivotY(r.getPivotY() * f);
+        rect.update();
+      });
+    });
   }
 }
