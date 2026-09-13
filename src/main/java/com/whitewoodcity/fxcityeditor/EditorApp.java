@@ -38,7 +38,7 @@ public class EditorApp extends Application {
     border.setBottom(bottomPane);
     vbox.getChildren().addAll(mainMenu, border);
 
-    stage.setScene(new Scene(vbox, Screen.getPrimary().getBounds().getWidth() * .75, Screen.getPrimary().getBounds().getHeight() * .75));
+    stage.setScene(new Scene(vbox, Screen.getPrimary().getBounds().getWidth() * .9, Screen.getPrimary().getBounds().getHeight() * .9));
 
     gamePane.prefWidthProperty().bind(stage.getScene().widthProperty());
     gamePane.prefHeightProperty().bind(stage.getScene().heightProperty());
