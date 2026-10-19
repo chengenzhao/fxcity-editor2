@@ -186,6 +186,9 @@ public class GameApp extends GameApplication {
     update(rect, arrow);
 
     EditorApp.getEditorApp().rightColumn.update();
+
+    entity.getViewComponent().removeDevChild(rect);
+    entity.getViewComponent().addDevChild(rect);
   }
 
   public void deSelectSubRect(EditableRectangle rect){
