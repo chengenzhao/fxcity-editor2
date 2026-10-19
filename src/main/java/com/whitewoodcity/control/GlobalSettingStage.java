@@ -2,6 +2,8 @@ package com.whitewoodcity.control;
 
 import com.whitewoodcity.fxcityeditor.EditorApp;
 import com.whitewoodcity.javafx.jvg.JVG;
+import com.whitewoodcity.javafx.jvg.JVGLayer;
+import com.whitewoodcity.javafx.jvg.JVGPath;
 import com.whitewoodcity.node.NumberField;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -82,6 +84,59 @@ public class GlobalSettingStage extends Stage {
     divide.setOnAction(_-> zoom(1.0/factor.getDouble()));
 
     gridpane.add(button, 0, 8, 2, 1);
+
+    var flip = new Button("flip");
+    flip.setOnAction(e ->{
+      double maxX = 0;
+      double maxY = 0;
+      for(var keyFrame:EditorApp.getEditorApp().bottomPane.keyFrames){
+        for(var rect:keyFrame.getRectBiMap().values()){
+          var node = rect.getNode();
+          if(node instanceof JVG jvg){
+            var xy = jvg.getXY();
+            var d = jvg.getDimension();
+            maxX = Math.max(xy.getX()+d.getWidth(), maxX);
+            maxY = Math.max(xy.getY()+d.getHeight(), maxY);
+          }
+        }
+      }
+      for(var keyFrame:EditorApp.getEditorApp().bottomPane.keyFrames) {
+        for (var rect : keyFrame.getRectBiMap().values()) {
+          var node = rect.getNode();
+          if (node instanceof JVG jvg) {
+            final var x = maxX;
+            jvg.getChildren().forEach(n ->{
+              if(n instanceof JVGLayer layer) {
+                layer.flipByX(x);
+                layer.update();
+              }
+            });
+          }
+
+          switch (rect.getNode()){
+            case JVG jvg -> {
+              var xy = jvg.getXY();
+              var d = jvg.getDimension();
+              rect.setX(xy.getX());
+              rect.setY(xy.getY());
+              rect.setWidth(d.getWidth());
+              rect.setHeight(d.getHeight());
+            }
+            case ImageView imageView -> {
+              rect.setX(imageView.getX());
+              rect.setY(imageView.getY());
+              rect.setWidth(imageView.getFitWidth());
+              rect.setHeight(imageView.getFitHeight());
+            }
+            default -> throw new RuntimeException("not supported type:"+node.getClass());
+          }
+
+          rect.update();
+        }
+      }
+
+    });
+    gridpane.add(flip, 0,9,2,1);
   }
 
   private void zoom(double f){
