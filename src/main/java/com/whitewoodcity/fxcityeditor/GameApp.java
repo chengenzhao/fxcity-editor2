@@ -103,9 +103,7 @@ public class GameApp extends GameApplication {
     for(var child:rect.getChildren())
       selectSubRect(child);
 
-    var arrow = arrowMap.computeIfAbsent(rect, this::createRotateArrow);
-    entity.getViewComponent().removeDevChild(arrow);
-    entity.getViewComponent().addDevChild(arrow);
+    Arrow arrow = arrowMap.computeIfAbsent(rect, this::createRotateArrow);
 
     rect.setOnMousePressed(e -> {
       switch (e.getButton()){
@@ -188,7 +186,9 @@ public class GameApp extends GameApplication {
     EditorApp.getEditorApp().rightColumn.update();
 
     entity.getViewComponent().removeDevChild(rect);
+    entity.getViewComponent().removeDevChild(arrow);
     entity.getViewComponent().addDevChild(rect);
+    entity.getViewComponent().addDevChild(arrow);
   }
 
   public void deSelectSubRect(EditableRectangle rect){

@@ -45,20 +45,6 @@ public class Arrow extends Group {
   }
 
   private void setUpStyleClassStructure() {
-//    mainLine.getStyleClass().setAll("arrow");
-//    headA.getStyleClass().setAll("arrow");
-//    headB.getStyleClass().setAll("arrow");
-//
-//    headA.getStyleClass().add("arrowhead");
-//    headB.getStyleClass().add("arrowhead");
-
-//    getStyleClass().addListener( (ListChangeListener<? super String>) c -> {
-//      c.next();
-//      for(Polyline p : new Polyline[]{mainLine, headA, headB}){
-//        p.getStyleClass().addAll(c.getAddedSubList());
-//        p.getStyleClass().removeAll(c.getRemoved());
-//      }
-//    });
 
     mainLine.setStroke(Color.LIMEGREEN);
     mainLine.setStrokeWidth(5);
