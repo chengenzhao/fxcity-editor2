@@ -46,7 +46,7 @@ public class GameApp extends GameApplication {
     entity.setX(200);
     entity.setY(100);
 
-    var line = new Line(0,400,WIDTH/2,400);
+    var line = new Line(0,500,WIDTH/2,500);
     line.endXProperty().bind(line.startXProperty().add(WIDTH/2));
     line.endYProperty().bindBidirectional(line.startYProperty());
     line.setStroke(Color.RED);

@@ -3,7 +3,6 @@ package com.whitewoodcity.control;
 import com.whitewoodcity.fxcityeditor.EditorApp;
 import com.whitewoodcity.javafx.jvg.JVG;
 import com.whitewoodcity.javafx.jvg.JVGLayer;
-import com.whitewoodcity.javafx.jvg.JVGPath;
 import com.whitewoodcity.node.NumberField;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -85,8 +84,13 @@ public class GlobalSettingStage extends Stage {
 
     gridpane.add(button, 0, 8, 2, 1);
 
+    var flip = createFlipButton();
+    gridpane.add(flip, 0,9,2,1);
+  }
+
+  private static Button createFlipButton() {
     var flip = new Button("flip");
-    flip.setOnAction(e ->{
+    flip.setOnAction(_ ->{
       double maxX = 0;
       double maxY = 0;
       for(var keyFrame:EditorApp.getEditorApp().bottomPane.keyFrames){
@@ -136,7 +140,7 @@ public class GlobalSettingStage extends Stage {
       }
 
     });
-    gridpane.add(flip, 0,9,2,1);
+    return flip;
   }
 
   private void zoom(double f){
