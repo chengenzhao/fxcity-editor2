@@ -36,6 +36,7 @@ public class EditorApp extends Application {
     border.setRight(new ScrollPane(rightColumn));
     border.setLeft(leftColumn);
     border.setBottom(bottomPane);
+    bottomPane.setPrefHeight(Screen.getPrimary().getBounds().getHeight() * .25);
     vbox.getChildren().addAll(mainMenu, border);
 
     stage.setScene(new Scene(vbox, Screen.getPrimary().getBounds().getWidth() * .9, Screen.getPrimary().getBounds().getHeight() * .9));
