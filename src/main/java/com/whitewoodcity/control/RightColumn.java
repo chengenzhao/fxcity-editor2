@@ -144,6 +144,7 @@ public class RightColumn extends GridPane {
     pivotX.setPrefWidth(100);
     pivotX.valueProperty().bindBidirectional(rect.getRotation().pivotXProperty());
     pivotX.valueProperty().addListener((_, _, newV) -> {
+      if(rect == null) return;
       if (newV.doubleValue() > rect.getX() + rect.getWidth()) pivotX.valueProperty().set(rect.getX() + rect.getWidth());
       if (newV.doubleValue() < rect.getX()) pivotX.valueProperty().set(rect.getX());
       rect.update();
