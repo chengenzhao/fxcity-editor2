@@ -30,8 +30,8 @@ public class RightColumn extends GridPane {
     this.setHgap(10);
     this.add(new Label("Temporary data:"), 0,0,2,1);
     this.add(new Label("Visible:"), 0, 1);
-    this.add(new HBox(visible), 1, 1);
-    this.add(new Label("Editing data:"), 0,2,2,1);
+    this.add(new HBox(visible, new Label(" Preview only")), 1, 1);
+    this.add(new Label("Editable data:"), 0,2,2,1);
     this.add(new Label("Parent:"), 0, 3);
     this.add(choiceBox, 1, 3);
     this.add(new HBox(multiple, division), 0, 4);
