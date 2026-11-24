@@ -33,6 +33,7 @@ public class EditableRectangle extends Rectangle {
 
     addRotate(rotate);
 
+    //bind node x,y to rect x,y
     ChangeListener<Number> c = (_, _, _) -> {
       switch (node) {
         case JVG jvg -> jvg.set(getX(), getY());

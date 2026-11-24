@@ -83,12 +83,15 @@ public class MainMenu extends MenuBar {
                 for (int j = 0; j < kfs.size(); j++) {
                   var rect = EditorApp.getEditorApp().bottomPane.keyFrames.get(j).getRectBiMap().get(item);
                   var dataJson = kfs.getJsonObject(j);
-                  rect.setX(dataJson.getNumber(RotateJsonKeys.X.key()).doubleValue());
-                  rect.setY(dataJson.getNumber(RotateJsonKeys.Y.key()).doubleValue());
+                  rect.setX(dataJson.getDouble(RotateJsonKeys.X.key()));
+                  rect.setY(dataJson.getDouble(RotateJsonKeys.Y.key()));
+                  if(dataJson.containsKey(RotateJsonKeys.OPACITY.key())){
+                    rect.getNode().setOpacity(dataJson.getDouble(RotateJsonKeys.OPACITY.key()));
+                  }
                   var r = dataJson.getJsonArray(RotateJsonKeys.ROTATES.key()).getJsonObject(0);
-                  rect.getRotation().setPivotX(r.getNumber(RotateJsonKeys.PIVOT_X.key()).doubleValue());
-                  rect.getRotation().setPivotY(r.getNumber(RotateJsonKeys.PIVOT_Y.key()).doubleValue());
-                  rect.getRotation().setAngle(r.getNumber(RotateJsonKeys.ANGLE.key()).intValue());
+                  rect.getRotation().setPivotX(r.getDouble(RotateJsonKeys.PIVOT_X.key()));
+                  rect.getRotation().setPivotY(r.getDouble(RotateJsonKeys.PIVOT_Y.key()));
+                  rect.getRotation().setAngle(r.getInteger(RotateJsonKeys.ANGLE.key()));
                   rect.update();
                 }
               }
