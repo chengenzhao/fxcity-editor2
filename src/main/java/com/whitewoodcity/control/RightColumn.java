@@ -42,7 +42,7 @@ public class RightColumn extends GridPane {
     this.add(yField, 1, 6);
     this.add(new Label("Opacity:"),0,7);
     this.add(opacity, 1, 7);
-    this.add(new Label("Rotate data:"), 1, 8,2,1);
+    this.add(new Label("Rotate data:"), 0, 8,2,1);
 
     factor.setText("1.1");
     factor.setPrefWidth(100);
