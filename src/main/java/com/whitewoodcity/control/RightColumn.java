@@ -21,22 +21,24 @@ public class RightColumn extends GridPane {
   NumberField xField = new NumberField(-(int) Screen.getPrimary().getBounds().getWidth(), (int) Screen.getPrimary().getBounds().getWidth());
   NumberField yField = new NumberField(-(int) Screen.getPrimary().getBounds().getHeight(), (int) Screen.getPrimary().getBounds().getHeight());
 
-  private final int unchangedRows = 5;
+  private final int unchangedRows = 7;
 
   public RightColumn() {
     this.setPadding(new Insets(10));
     this.setVgap(10);
     this.setHgap(10);
-    this.add(new Label("Parent:"), 0, 0);
-    this.add(choiceBox, 1, 0);
+    this.add(new Label("Temporary data:"), 0,0,2,1);
     this.add(new Label("Visible:"), 0, 1);
-    this.add(visible, 1, 1);
-    this.add(new HBox(multiple, division), 0, 2);
-    this.add(factor, 1, 2);
-    this.add(new Label("X:"), 0, 3);
-    this.add(xField, 1, 3);
-    this.add(new Label("Y:"), 0, 4);
-    this.add(yField, 1, 4);
+    this.add(new HBox(visible), 1, 1);
+    this.add(new Label("Editing data:"), 0,2,2,1);
+    this.add(new Label("Parent:"), 0, 3);
+    this.add(choiceBox, 1, 3);
+    this.add(new HBox(multiple, division), 0, 4);
+    this.add(factor, 1, 4);
+    this.add(new Label("X:"), 0, 5);
+    this.add(xField, 1, 5);
+    this.add(new Label("Y:"), 0, 6);
+    this.add(yField, 1, 6);
 
     factor.setText("1.1");
     factor.setPrefWidth(100);
@@ -58,7 +60,8 @@ public class RightColumn extends GridPane {
       yField.valueProperty().unbindBidirectional(rect.yProperty());
     }
 
-    this.getChildren().remove(unchangedRows * 2, this.getChildren().size());
+    var unchangedItemsNumbers = unchangedRows * 2 - 2;//minus how many column spans > 1
+    this.getChildren().remove(unchangedItemsNumbers, this.getChildren().size());
 
     multiple.setOnAction(null);
     division.setOnAction(null);

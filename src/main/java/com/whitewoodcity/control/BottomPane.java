@@ -26,7 +26,7 @@ public class BottomPane extends Pane {
   public final List<KeyFrame> keyFrames = new ArrayList<>();
   public KeyFrame currentFrame;
 
-  private final List<Transition> transition = new ArrayList<>();
+  private final List<Transition> transitions = new ArrayList<>();
 
   public NumberField totalTime = new NumberField(100);
   public Line line;
@@ -106,8 +106,8 @@ public class BottomPane extends Pane {
   }
 
   public void clearTransition(){
-    transition.forEach(Animation::stop);
-    transition.clear();
+    transitions.forEach(Animation::stop);
+    transitions.clear();
   }
 
   private void playTransition(int cycleCount) {
@@ -129,9 +129,9 @@ public class BottomPane extends Pane {
       var rotates = new Rotates(node);
       var tran = rotates.buildTransition("", json.toString());
       tran.setCycleCount(cycleCount);
-      transition.add(tran);
+      transitions.add(tran);
     }
-    transition.forEach(Animation::play);
+    transitions.forEach(Animation::play);
   }
 
   public KeyFrame addKeyFrame(double timeInMillis) {
