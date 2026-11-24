@@ -20,8 +20,9 @@ public class RightColumn extends GridPane {
   NumberField factor = new NumberField(1, 100);
   NumberField xField = new NumberField(-(int) Screen.getPrimary().getBounds().getWidth(), (int) Screen.getPrimary().getBounds().getWidth());
   NumberField yField = new NumberField(-(int) Screen.getPrimary().getBounds().getHeight(), (int) Screen.getPrimary().getBounds().getHeight());
+  Slider opacity = new Slider(0,1,1);
 
-  private final int unchangedRows = 7;
+  private final int unchangedRows = 9;
 
   public RightColumn() {
     this.setPadding(new Insets(10));
@@ -39,12 +40,19 @@ public class RightColumn extends GridPane {
     this.add(xField, 1, 5);
     this.add(new Label("Y:"), 0, 6);
     this.add(yField, 1, 6);
+    this.add(new Label("Opacity:"),0,7);
+    this.add(opacity, 1, 7);
+    this.add(new Label("Rotate data:"), 1, 8,2,1);
 
     factor.setText("1.1");
     factor.setPrefWidth(100);
 
-    yField.disableProperty().bind(xField.disableProperty());
+    opacity.setShowTickLabels(true);
+    opacity.setShowTickMarks(true);
+    opacity.setMajorTickUnit(0.1);
 
+    yField.disableProperty().bind(xField.disableProperty());
+    opacity.disableProperty().bind(xField.disableProperty());
   }
 
   public void unbind() {
@@ -56,11 +64,12 @@ public class RightColumn extends GridPane {
     if (rect != null) {
       rect.mouseTransparentProperty().unbind();
       visible.selectedProperty().unbindBidirectional(rect.getNode().visibleProperty());
+      opacity.valueProperty().unbindBidirectional(rect.getNode().opacityProperty());
       xField.valueProperty().unbindBidirectional(rect.xProperty());
       yField.valueProperty().unbindBidirectional(rect.yProperty());
     }
 
-    var unchangedItemsNumbers = unchangedRows * 2 - 2;//minus how many column spans > 1
+    var unchangedItemsNumbers = unchangedRows * 2 - 3;//minus how many column spans > 1
     this.getChildren().remove(unchangedItemsNumbers, this.getChildren().size());
 
     multiple.setOnAction(null);
@@ -120,6 +129,7 @@ public class RightColumn extends GridPane {
     });
 
     visible.selectedProperty().bindBidirectional(rect.getNode().visibleProperty());
+    opacity.valueProperty().bindBidirectional(rect.getNode().opacityProperty());
     rect.mouseTransparentProperty().bind(visible.selectedProperty().map(s -> !s));
     xField.valueProperty().bindBidirectional(rect.xProperty());
     yField.valueProperty().bindBidirectional(rect.yProperty());

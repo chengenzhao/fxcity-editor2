@@ -122,7 +122,10 @@ public class BottomPane extends Pane {
       rect.update();
       var node = rect.getNode();
       if (node instanceof JVG jvg) {
+        var o = jvg.getOpacity();
+        jvg.setOpacity(1);
         node = jvg.toImageView();
+        jvg.setOpacity(o);
       }
       var json = jsonArray.getJsonArray(i);
       app.entity.getViewComponent().addChild(node);
@@ -267,10 +270,12 @@ public class BottomPane extends Pane {
         var xy = jvg.getXY();
         json.put(RotateJsonKeys.X.key(), xy.getX());
         json.put(RotateJsonKeys.Y.key(), xy.getY());
+        json.put(RotateJsonKeys.OPACITY.key(),jvg.getOpacity());
       }
       case ImageView imageView -> {
         json.put(RotateJsonKeys.X.key(), imageView.getX());
         json.put(RotateJsonKeys.Y.key(), imageView.getY());
+        json.put(RotateJsonKeys.OPACITY.key(), imageView.getOpacity());
       }
       default -> {
       }

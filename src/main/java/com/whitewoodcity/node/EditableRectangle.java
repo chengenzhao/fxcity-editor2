@@ -207,6 +207,7 @@ public class EditableRectangle extends Rectangle {
         v.setFitHeight(view.getFitHeight());
         v.setX(view.getX());
         v.setY(view.getY());
+        v.setOpacity(view.getOpacity());
         yield v;
       }
       default -> throw new RuntimeException("Unsupported Node type, only Texture, ImageView, JVG are supported");
