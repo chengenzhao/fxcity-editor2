@@ -4,9 +4,10 @@ import module javafx.controls;
 import com.almasb.fxgl.dsl.FXGL;
 import com.whitewoodcity.fxcityeditor.EditorApp;
 import com.whitewoodcity.fxcityeditor.GameApp;
-import com.whitewoodcity.javafx.jvg.JVG;
 import com.whitewoodcity.node.EditableRectangle;
 import com.whitewoodcity.node.NumberField;
+import io.javafx.whitewoodcity.jvg.JVG;
+import javafx.stage.Screen;
 import javafx.util.StringConverter;
 
 public class RightColumn extends GridPane {

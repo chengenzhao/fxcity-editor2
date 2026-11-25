@@ -1,9 +1,9 @@
 package com.whitewoodcity.control;
 
 import com.whitewoodcity.fxcityeditor.EditorApp;
-import com.whitewoodcity.javafx.jvg.JVG;
-import com.whitewoodcity.javafx.jvg.JVGLayer;
 import com.whitewoodcity.node.NumberField;
+import io.javafx.whitewoodcity.jvg.JVG;
+import io.javafx.whitewoodcity.jvg.JVGLayer;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
