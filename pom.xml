@@ -12,9 +12,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <junit.version>6.1.3</junit.version>
-        <fxcity.version>8.3</fxcity.version>
+        <fxcity.version>8.6</fxcity.version>
         <guava.version>33.8.0-jre</guava.version>
-        <vertx.version>5.2.3</vertx.version>
         <jar.name>${project.name}</jar.name>
     </properties>
 
@@ -28,11 +27,6 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>${guava.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.vertx</groupId>
-            <artifactId>vertx-core</artifactId>
-            <version>${vertx.version}</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
